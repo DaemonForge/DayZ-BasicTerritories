@@ -12,7 +12,7 @@ modded class MissionGameplay extends MissionBase
 	
 	
 	void RPCBasicTerritoriesModSettings( CallType type, ref ParamsReadContext ctx, ref PlayerIdentity sender, ref Object target ) {
-		Param1< BasicTerritoriesConfig > data  //Player ID, Icon
+		Param1< BasicTerritoriesConfig > data; 
 		if ( !ctx.Read( data ) ) return;
 		Print("[BASICT][Client] Received Config From Server");
 		m_BasicTerritoriesConfig = data.param1;

@@ -3,7 +3,7 @@ modded class MissionServer extends MissionBase
 	override void OnInit() {
 		super.OnInit();
 		
-		Print("[BasicTerritories] OnInit")
+		Print("[BasicTerritories] OnInit");
 		GetBasicTerritoriesConfig();
 		GetRPCManager().AddRPC( "BASICT", "RPCBasicTerritoriesModSettings", this, SingeplayerExecutionType.Both );
 	}
