@@ -11,7 +11,7 @@ modded class ActionDeployObject : ActionContinuousBase
 	void ~ActionDeployObject() {
 		RemoveTheBasicMapMarker();
 	}
-	
+
 	override bool ActionCondition( PlayerBase player, ActionTarget target, ItemBase item )
 	{
 		if (super.ActionCondition( player, target, item )){
@@ -100,8 +100,9 @@ modded class ActionDeployObject : ActionContinuousBase
 					if (Class.CastTo( theFlag, objects.Get(i) ) ){
 						
 						if ( item.IsInherited(TerritoryFlagKit) ){
-							if (GetBasicTerritoriesConfig().CanWarnPlayer()){
-								GetGame().Chat("Dave: Sorry you can't build a territory this close to another territory", "");
+							string WarningMessage = "Sorry you can't build a territory this close to another territory";
+							if (GetBasicTerritoriesConfig().CanWarnPlayer(WarningMessage)){
+								GetBasicTerritoriesConfig().SendNotification(WarningMessage);
 							}
 							#ifdef BASICMAP
 							if (BASICT_Marker){
@@ -116,8 +117,9 @@ modded class ActionDeployObject : ActionContinuousBase
 							theFlag.SyncTerritory();
 						}
 						m_CanPlaceHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DEPLOY);
-						if (!m_CanPlaceHere && GetBasicTerritoriesConfig().CanWarnPlayer() ){
-							GetGame().Chat("Dave: Sorry you can't build this close to an enemy territory", "");
+						string DeployWarningMessage = "Sorry you can't build this close to an enemy territory";
+						if (!m_CanPlaceHere && GetBasicTerritoriesConfig().CanWarnPlayer(DeployWarningMessage) ){
+							GetBasicTerritoriesConfig().SendNotification(DeployWarningMessage);
 						}
 						return m_CanPlaceHere;
 					}
@@ -132,9 +134,9 @@ modded class ActionDeployObject : ActionContinuousBase
 				#endif
 			}
 		}
-		if (GetBasicTerritoriesConfig().CanWarnPlayer() && item && !item.IsItemTent() && !item.IsInherited(TerritoryFlagKit)){
-			GetGame().Chat("Dave: You are building outside a territory, Base Building objects", "");
-			GetGame().Chat("will despawn in two weeks without a Territory", "");
+		string DeSpawnWarningMessage = "You are building outside a territory, Base Building objects will despawn in two weeks without a Territory";
+		if (GetBasicTerritoriesConfig().CanWarnPlayer(DeSpawnWarningMessage) && item && !item.IsItemTent() && !item.IsInherited(TerritoryFlagKit)){
+			GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
 		}
 		m_CanPlaceHere = true;
 		return true;

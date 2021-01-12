@@ -19,8 +19,12 @@ class BasicTerritoriesConfig
 	
 	int MemberPermissions = TerritoryPerm.DEFAULTMEMBER;
 	
+	int Notifications = 0; //0 Chat | 1 Notifications Mod
+	
 	[NonSerialized()]
 	protected bool m_BlockWarnPlayer = false;
+	[NonSerialized()]
+	protected string m_BlockLastMessage = "";
 	
 	void Load(){
 		Print("[BasicTerritories] Loading Config");
@@ -52,11 +56,12 @@ class BasicTerritoriesConfig
 		return false;
 	}
 	
-	bool CanWarnPlayer(){
-		if ( !m_BlockWarnPlayer ){
-			//Print("m_BlockWarnPlayer True");
+	bool CanWarnPlayer(string message = ""){
+		message.ToLower();
+		if ( !m_BlockWarnPlayer && m_BlockLastMessage != message){
+			m_BlockLastMessage = message;
 			m_BlockWarnPlayer = true;
-			GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.ResetWarning, 15 * 1000);
+			GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.ResetWarning, 12 * 1000);
 			return true;
 		}
 		//Print("m_BlockWarnPlayer false");
@@ -76,6 +81,18 @@ class BasicTerritoriesConfig
 		return MemberPermissions;
 	}
 	
+	void SendNotification(string text, string icon = "BasicTerritories/images/NoBuild.paa"){
+		if (GetGame().IsClient()){
+			if (Notifications == 0){
+				GetGame().Chat(text,"");
+			} 
+			#ifdef NOTIFICATIONS 
+			else if (Notifications == 1){
+				NotificationSystem.SimpleNoticiation(text, "Territory", icon, ARGB(230, 209, 60, 60), 8, NULL);
+			}
+			#endif
+		}
+	}
 }
 ref BasicTerritoriesConfig m_BasicTerritoriesConfig;
 

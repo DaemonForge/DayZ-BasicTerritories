@@ -6,7 +6,12 @@ modded class ActionLowerFlag: ActionContinuousBase
 			TerritoryFlag theFlag = TerritoryFlag.Cast( target.GetObject() );
 			PlayerBase thePlayer = PlayerBase.Cast(player);
 			if ( theFlag && thePlayer && thePlayer.GetIdentity() ){
-				return theFlag.CheckPlayerPermission(thePlayer.GetIdentity().GetId(), TerritoryPerm.LOWERFLAG);
+				if (theFlag.CheckPlayerPermission(thePlayer.GetIdentity().GetId(), TerritoryPerm.LOWERFLAG)){
+					
+					return true;
+				}else {
+					GetBasicTerritoriesConfig().SendNotification("Sorry, you do not have permissions to lower the flag in this territory");
+				}
 			}
 		}
 		return false;
