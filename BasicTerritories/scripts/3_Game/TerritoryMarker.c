@@ -43,7 +43,7 @@ class BasicTerritoryMapMarker extends BasicMapCircleMarker {
 	}
 	
 	override string GetGroup(){
-		return BasicMap().CLIENT_KEY;
+		return "BasicTerritories";
 	}
 }
 #endif
