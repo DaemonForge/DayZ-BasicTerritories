@@ -27,19 +27,20 @@ modded class ActionDeployObject : ActionContinuousBase
 					bool ShowTerritoryOnMap = BasicMap().ShowSelfOnMap();
 					if (item && item.IsInherited(TerritoryFlagKit) && ShowTerritoryOnMap){
 						if (!BASICT_Marker){
-							BASICT_Marker = new ref BasicTerritoryMapMarker("Territory", thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition());
+							Print("[BasicTerritory] [BasicMap] Creating Marker for TerritoryFlag");
+							BASICT_Marker = new ref BasicTerritoryMapMarker("", thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition());
 							BASICT_Marker.SetRadius(GameConstants.REFRESHER_RADIUS);
-							BasicMap().AddMarker(BasicMap().CLIENT_KEY, BASICT_Marker);
+							BasicMap().AddMarker("BasicTerritories", BASICT_Marker);
 						} else if ( BASICT_Marker.GetPosition() != thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition() ) {
 							if (BASICT_Marker.GetPosition() == vector.Zero){
-								BasicMap().AddMarker(BasicMap().CLIENT_KEY, BASICT_Marker);
+								BasicMap().AddMarker("BasicTerritories", BASICT_Marker);
 							}
 							BASICT_Marker.SetPosition(thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition());
 							BASICT_Marker.SetRadius(GameConstants.REFRESHER_RADIUS);
 						}
 					} else {
 						if (BASICT_Marker && BASICT_Marker.GetPosition() != vector.Zero && ShowTerritoryOnMap){
-							BasicMap().RemoveMarker(BasicMap().CLIENT_KEY , BASICT_Marker);
+							BasicMap().RemoveMarker("BasicTerritories", BASICT_Marker);
 							BASICT_Marker.SetPosition(vector.Zero);
 							BASICT_Marker.SetRadius(0);
 						}
@@ -71,6 +72,7 @@ modded class ActionDeployObject : ActionContinuousBase
 	void RemoveTheBasicMapMarker(){
 	#ifdef BASICMAP
 		if (GetGame().IsClient() && BASICT_Marker && BASICT_Marker.GetPosition() != vector.Zero ){
+			Print("[BasicTerritory] [BasicMap] Removing Marker for TerritoryFlag");
 			BasicMap().RemoveMarker(BasicMap().CLIENT_KEY , BASICT_Marker);
 			BASICT_Marker.SetPosition(vector.Zero);
 			BASICT_Marker.SetRadius(0);
@@ -83,7 +85,14 @@ modded class ActionDeployObject : ActionContinuousBase
 		if (pos == vector.Zero || !item){
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
-		} else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) ){
+		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos)){
+			string NoBuildZoneWarningMessage = "You can't build here, are trying to build in a designated no build zones";
+			if (GetBasicTerritoriesConfig().CanWarnPlayer(NoBuildZoneWarningMessage)){
+				GetBasicTerritoriesConfig().SendNotification(NoBuildZoneWarningMessage);
+			}
+			m_CanPlaceHere = false;
+			return m_CanPlaceHere;
+		}else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) ){
 			m_CanPlaceHere = true;
 			return m_CanPlaceHere;
 		} else {
@@ -139,6 +148,6 @@ modded class ActionDeployObject : ActionContinuousBase
 			GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
 		}
 		m_CanPlaceHere = true;
-		return true;
+		return m_CanPlaceHere;
 	}
 };

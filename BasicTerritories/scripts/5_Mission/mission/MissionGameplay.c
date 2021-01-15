@@ -16,5 +16,18 @@ modded class MissionGameplay extends MissionBase
 		if ( !ctx.Read( data ) ) return;
 		Print("[BASICT][Client] Received Config From Server");
 		m_BasicTerritoriesConfig = data.param1;
+		
+		#ifdef BASICMAP
+		if (GetBasicTerritoriesConfig().NoBuildZones){
+			for (int i = 0; i < GetBasicTerritoriesConfig().NoBuildZones.Count(); i++){
+				if (GetBasicTerritoriesConfig().NoBuildZones.Get(i) && GetBasicTerritoriesConfig().NoBuildZones.Get(i).DrawOnMap){
+					BasicMapCircleMarker tmpMarker = new BasicMapCircleMarker("",  GetBasicTerritoriesConfig().NoBuildZones.Get(i).GetPos(), "BasicTerritories\\images\\NoBuild.paa", {189, 38, 78},150);
+					tmpMarker.SetRadius(GetBasicTerritoriesConfig().NoBuildZones.Get(i).R);
+					tmpMarker.SetShowCenterMarker(true);
+					BasicMap().AddMarker("TerritoryNoBuildZones",tmpMarker);
+				}
+			}
+		}
+		#endif
 	}
 }

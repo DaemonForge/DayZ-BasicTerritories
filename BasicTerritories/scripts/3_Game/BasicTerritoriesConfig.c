@@ -21,6 +21,8 @@ class BasicTerritoriesConfig
 	
 	int Notifications = 0; //0 Chat | 1 Notifications Mod
 	
+	ref array< ref BasicTerritoriesNoBuildZones> NoBuildZones = new array< ref BasicTerritoriesNoBuildZones>;
+	
 	[NonSerialized()]
 	protected bool m_BlockWarnPlayer = false;
 	[NonSerialized()]
@@ -36,6 +38,8 @@ class BasicTerritoriesConfig
 					Save();
 				}
 			}else{ //File does not exist create file
+				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(3693.56, 6010.05, 100));
+				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
 				Save();
 			}
 		}
@@ -93,7 +97,51 @@ class BasicTerritoriesConfig
 			#endif
 		}
 	}
+	
+	
+	bool CanBuildHere(vector pos){
+		if (NoBuildZones){
+			for (int i = 0; i < NoBuildZones.Count(); i++){
+				if (NoBuildZones.Get(i) && NoBuildZones.Get(i).Check(pos) ){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 }
+
+class BasicTerritoriesNoBuildZones{
+	float X;
+	float Z;
+	float R;
+	bool DrawOnMap = false;
+	
+	void BasicTerritoriesNoBuildZones(float x, float z, float r){
+		X = x;
+		Z = z;
+		R = r;
+	}
+	
+	//Returns True If is in zone
+	bool Check(vector checkPos){
+		if (checkPos){
+			vector ZeroedHeightPos = Vector(checkPos[0], 0,checkPos[2]);
+			if (vector.Distance(ZeroedHeightPos, Vector(X, 0, Z)) <= R){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	vector GetPos(){
+		return Vector(X, GetGame().SurfaceY(X,Z),Z);
+	}
+		
+}
+
+
 ref BasicTerritoriesConfig m_BasicTerritoriesConfig;
 
 //Helper function to return Config
