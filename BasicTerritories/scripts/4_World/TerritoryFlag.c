@@ -191,6 +191,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	bool CheckPlayerPermission(string guid, int permission){
 		int publicPerms = GetBasicTerritoriesConfig().PublicPermission();
 		int PermsCheck = publicPerms & permission;
+		
 		if ( PermsCheck == permission || guid == m_TerritoryOwner){
 			//Print("[BasicTerritory] Action is in public permissions");
 			return true;
@@ -201,7 +202,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 				return m_TerritoryMembers.Check(guid, permission);
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	
