@@ -6,7 +6,8 @@ class BasicTerritoriesConfig
 	string ConfigVersion = "1";
 	ref TStringArray WhiteList = { 
 		"Trap",
-		"Paper"
+		"Paper",
+		"Fireplace"
 	};
 	ref TStringArray ServerAdmins = {
 		"GUID"
@@ -27,7 +28,7 @@ class BasicTerritoriesConfig
 		
 	
 	[NonSerialized()]
-	protected bool m_BlockWarnPlayer = false;
+	protected int m_BlockWarnPlayer = 0;
 	[NonSerialized()]
 	protected string m_BlockLastMessage = "";
 	[NonSerialized()]
@@ -46,7 +47,7 @@ class BasicTerritoriesConfig
 				if (!FileExist(DirPATH)){
 					MakeDirectory(DirPATH);
 				}
-				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(3693.56, 6010.05, 100));
+				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
 				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
 				Save();
 			}
@@ -118,20 +119,15 @@ class BasicTerritoriesConfig
 	
 	bool CanWarnPlayer(string message = ""){
 		message.ToLower();
-		if ( !m_BlockWarnPlayer && m_BlockLastMessage != message){
+		int curTime = GetGame().GetTime();
+		if ( curTime > m_BlockWarnPlayer || m_BlockLastMessage != message){
 			m_BlockLastMessage = message;
-			m_BlockWarnPlayer = true;
-			GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.ResetWarning, 12 * 1000);
+			m_BlockWarnPlayer = curTime + 6000;
 			return true;
 		}
-		//Print("m_BlockWarnPlayer false");
 		return false;
 	}
 	
-	void ResetWarning(){
-		//Print("ResetWarning True");
-		m_BlockWarnPlayer = false;
-	}
 	
 	int PublicPermission(){
 		return PublicPermissions;
@@ -142,7 +138,7 @@ class BasicTerritoriesConfig
 	}
 	
 	void SendNotification(string text, string icon = "BasicTerritories/images/NoBuild.paa"){
-		if (GetGame().IsClient()){
+		if (GetGame().IsClient() && CanWarnPlayer(text)){
 			if (Notifications == 0){
 				GetGame().Chat(text,"");
 			} 
@@ -155,7 +151,10 @@ class BasicTerritoriesConfig
 	}
 	
 	
-	bool CanBuildHere(vector pos){
+	bool CanBuildHere(vector pos, string item = ""){
+		if (IsInWhiteList(item)){
+			return true;
+		}
 		if (NoBuildZones){
 			for (int i = 0; i < NoBuildZones.Count(); i++){
 				if (NoBuildZones.Get(i) && NoBuildZones.Get(i).Check(pos) ){

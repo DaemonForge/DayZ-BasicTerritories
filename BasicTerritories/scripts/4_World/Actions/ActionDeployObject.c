@@ -85,11 +85,9 @@ modded class ActionDeployObject : ActionContinuousBase
 		if (pos == vector.Zero || !item){
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
-		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos)){
+		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos, item.GetType())){
 			string NoBuildZoneWarningMessage = "You can't build here, are trying to build in a designated no build zones";
-			if (GetBasicTerritoriesConfig().CanWarnPlayer(NoBuildZoneWarningMessage)){
-				GetBasicTerritoriesConfig().SendNotification(NoBuildZoneWarningMessage);
-			}
+			GetBasicTerritoriesConfig().SendNotification(NoBuildZoneWarningMessage);
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
 		}else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) ){
@@ -110,9 +108,7 @@ modded class ActionDeployObject : ActionContinuousBase
 						
 						if ( item.IsInherited(TerritoryFlagKit) ){
 							string WarningMessage = "Sorry you can't build a territory this close to another territory";
-							if (GetBasicTerritoriesConfig().CanWarnPlayer(WarningMessage)){
-								GetBasicTerritoriesConfig().SendNotification(WarningMessage);
-							}
+							GetBasicTerritoriesConfig().SendNotification(WarningMessage);
 							#ifdef BASICMAP
 							if (BASICT_Marker){
 								BASICT_Marker.SetOverLaping(true);
@@ -127,14 +123,13 @@ modded class ActionDeployObject : ActionContinuousBase
 						}
 						m_CanPlaceHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DEPLOY);
 						string DeployWarningMessage = "Sorry you can't build this close to an enemy territory";
-						if (!m_CanPlaceHere && GetBasicTerritoriesConfig().CanWarnPlayer(DeployWarningMessage) ){
+						if (!m_CanPlaceHere){
 							GetBasicTerritoriesConfig().SendNotification(DeployWarningMessage);
 						}
 						return m_CanPlaceHere;
 					}
 				}
-			} else {
-			}
+			} 
 			if (item && item.IsInherited(TerritoryFlagKit) ){
 				#ifdef BASICMAP
 				if (BASICT_Marker){
@@ -144,9 +139,7 @@ modded class ActionDeployObject : ActionContinuousBase
 			}
 		}
 		string DeSpawnWarningMessage = "You are building outside a territory, Base Building objects will despawn in two weeks without a Territory";
-		if (GetBasicTerritoriesConfig().CanWarnPlayer(DeSpawnWarningMessage) && item && !item.IsItemTent() && !item.IsInherited(TerritoryFlagKit)){
-			GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
-		}
+		GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
 		m_CanPlaceHere = true;
 		return m_CanPlaceHere;
 	}
