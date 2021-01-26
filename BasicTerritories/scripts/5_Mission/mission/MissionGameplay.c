@@ -18,14 +18,22 @@ modded class MissionGameplay extends MissionBase
 		m_BasicTerritoriesConfig = data.param1;
 		
 		#ifdef BASICMAP
-		if (GetBasicTerritoriesConfig().NoBuildZones){
+		if (GetBasicTerritoriesConfig().NoBuildZones ){
+			bool SomeZonesOnTheMap = false;
 			for (int i = 0; i < GetBasicTerritoriesConfig().NoBuildZones.Count(); i++){
 				if (GetBasicTerritoriesConfig().NoBuildZones.Get(i) && GetBasicTerritoriesConfig().NoBuildZones.Get(i).DrawOnMap){
 					BasicMapCircleMarker tmpMarker = new BasicMapCircleMarker("",  GetBasicTerritoriesConfig().NoBuildZones.Get(i).GetPos(), "BasicTerritories\\images\\NoBuild.paa", {189, 38, 78},150);
 					tmpMarker.SetRadius(GetBasicTerritoriesConfig().NoBuildZones.Get(i).R);
 					tmpMarker.SetShowCenterMarker(true);
+					tmpMarker.SetHideIntersects(true);
+					tmpMarker.SetCanEdit(false);
+					tmpMarker.SetGroup("TerritoryNoBuildZones");
 					BasicMap().AddMarker("TerritoryNoBuildZones",tmpMarker);
+					SomeZonesOnTheMap = true;
 				}
+			}
+			if (SomeZonesOnTheMap){
+				BasicMap().RegisterGroup("TerritoryNoBuildZones", new BasicMapGroupMetaData("TerritoryNoBuildZones", "No Build Areas"),NULL);
 			}
 		}
 		#endif
