@@ -75,10 +75,10 @@ class BasicTerritoriesConfig
 			Print("File At" + RaidPATH + " could not be found");
 			return;
 		}
-		JsonSerializer m_Serializer = new JsonSerializer;
+		autoptr JsonSerializer m_Serializer = new JsonSerializer;
 		m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
 
-		FileHandle fh = OpenFile(RaidPATH, FileMode.READ);
+		autoptr FileHandle fh = OpenFile(RaidPATH, FileMode.READ);
 		string jsonData;
 		string error;
 		if (fh) {
@@ -109,7 +109,10 @@ class BasicTerritoriesConfig
 	bool IsInWhiteList(string item){
 		if (WhiteList && WhiteList.Count() > 0){
 			for (int i = 0; i < WhiteList.Count(); i++){
-				if (item.Contains(WhiteList.Get(i))){
+				item.ToLower();
+				string wItem = WhiteList.Get(i);
+				wItem.ToLower();
+				if (item.Contains(wItem)){
 					return true;
 				}
 			}
@@ -165,25 +168,26 @@ class BasicTerritoriesConfig
 		return true;
 	}
 	
-	float GetHealBack(float dmg, string type, int dmgType, string tool, string ammo, string part ){
+	float GetHealBack(float dmg, string type, int dmgType, string tool, string ammo, string part, TStringArray PartsWithHealth = NULL, float distance = 0){
 		if (!m_RaidHandlerLoaded || !GetRaidHandlers()){
 			return 0;
 		}
-		float dmgmdf = -1;
+		bool totalDmgSet = false;
+		float totalDmg = 0;
 		type.ToLower();
 		for (int i = 0; i < GetRaidHandlers().Count(); i++){
 			string theKey = GetRaidHandlers().Get(i).TypeName;
 			theKey.ToLower();
 			if ( type.Contains( theKey ) || theKey == "*"){
-				dmgmdf = GetRaidHandlers().Get(i).GetDamageMdf(dmgType, tool, ammo, part);
+				totalDmg = GetRaidHandlers().Get(i).GetTrueDamage(dmg, dmgType, tool, ammo, part,PartsWithHealth, distance);
+				totalDmgSet = true;
 				if (theKey != "*"){
 					break;
 				}
 			}
 		}
 		
-		if (dmgmdf >= 0){
-			float totalDmg = dmg * dmgmdf;
+		if (totalDmgSet){
 			float rtnValue = dmg - totalDmg;
 			return rtnValue;
 		}
@@ -220,114 +224,6 @@ class BasicTerritoriesNoBuildZones{
 		
 }
 
-class BasicRaidHandler{
-	string TypeName = "";
-	float FireArms = 0.3;
-	float Melee = 0.1;
-	float Explosive = 1;
-	float Other = 0;
-	ref array<ref BasicPartRaidHandler> PartModifier = new ref array<ref BasicPartRaidHandler>;
-	ref array<ref BasicToolsRaidHandler> ToolModifiers = new ref array<ref BasicToolsRaidHandler>;
-	[NonSerialized()]
-	ref map<string, float> ToolModifier; //To make getting stuff more effecient
-	
-	
-	void BasicRaidHandler(string type, bool init = true){
-		TypeName = type;
-		if (init){
-			PartModifier.Insert(new ref BasicPartRaidHandler("wall_wood_", 1.2));
-			PartModifier.Insert(new ref BasicPartRaidHandler("wall_metal_", 0.7, {"m67Grenade", "rgd5grenade", "landminetrap"}));
-			ToolModifiers.Insert(new ref BasicToolsRaidHandler("sledgehammer", 100));
-		}
-		PartModifier.Insert(new ref BasicPartRaidHandler("*", 1 ));
-	}
-	
-	float GetDamageMdf(int dmgType, string tool, string ammo, string part){
-		int i = 0;
-		float toolmdf = 1;
-		float partMdfr = 1;
-		float typeMdfr = 1;
-		part.ToLower();
-		ammo.ToLower();
-		tool.ToLower();
-		if (dmgType == DT_CLOSE_COMBAT){
-			typeMdfr = Melee;
-		} else if (dmgType == DT_FIRE_ARM){
-			typeMdfr = FireArms;
-		} else if (dmgType == DT_EXPLOSION){
-			typeMdfr = Explosive;
-		} else {
-			typeMdfr = Other;
-		}
-		if (!ToolModifier){
-			ToolModifier = new ref map<string, float>;
-			for (i = 0; i < ToolModifiers.Count(); i++){
-				ToolModifier.Set(ToolModifiers.Get(i).Tool, ToolModifiers.Get(i).Modifier);
-			}
-		}
-		if (ToolModifier){
-			
-			if ( !ToolModifier.Find(tool, toolmdf)){
-				if (!ToolModifier.Find(ammo, toolmdf)){
-					toolmdf = 1;
-				}
-			} 
-		}
-		
-		BasicPartRaidHandler partRaidHander;
-		
-		if (PartModifier){
-			for ( i = 0; i < PartModifier.Count(); i++){
-				string theKey = PartModifier.Get(i).Part;
-				theKey.ToLower();
-				if ( part.Contains( theKey ) ||  theKey == "*"){
-					partRaidHander = BasicPartRaidHandler.Cast(PartModifier.Get(i));
-					if (theKey != "*"){
-						break;
-					}
-				}
-			}
-		}
-		if (partRaidHander) {
-			if (partRaidHander.WhiteList && partRaidHander.WhiteList.Count() > 0 && partRaidHander.WhiteList.Find(ammo) == -1&& partRaidHander.WhiteList.Find(tool) == -1 ){
-				partMdfr = 0;
-			} else {
-				partMdfr = partRaidHander.Modifier;
-			}
-		} else {
-			partMdfr = 1;
-		}
-		float rtrnValue = toolmdf * partMdfr * typeMdfr;
-		Print("[Territories] [Debug] GetDamageMdf Returning: " + rtrnValue + "( " + toolmdf + " * " + partMdfr + " * " + typeMdfr + " )");
-		return rtrnValue;
-	}
-}
-
-class BasicPartRaidHandler{
-	string Part = "";
-	float Modifier = 1;
-	ref TStringArray WhiteList = new TStringArray;
-	
-	void BasicPartRaidHandler( string part,  float modifier = 1, TStringArray whiteList = NULL )
-	{
-		Part = part;
-		Modifier = modifier;
-		if (whiteList){
-			WhiteList = whiteList;
-		}
-	}
-}
-
-class BasicToolsRaidHandler{
-	string Tool = "";
-	float Modifier = 1;
-	
-	void BasicToolsRaidHandler(string tool, float mdfr){
-		Tool = tool;
-		Modifier = mdfr;
-	}
-	
-}
 
 ref BasicTerritoriesConfig m_BasicTerritoriesConfig;
 
