@@ -82,9 +82,8 @@ modded class ActionBuildPart: ActionContinuousBase
 							theFlag.SyncTerritory();
 						}
 						m_CanBuildHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.BUILD);
-						string WarningMessage = "Sorry, you don't have permissions to build in this area.";
 						if (!m_CanBuildHere){
-							GetBasicTerritoriesConfig().SendNotification(WarningMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().BuildPartWarningMessage);
 						}
 						return m_CanBuildHere;
 					}

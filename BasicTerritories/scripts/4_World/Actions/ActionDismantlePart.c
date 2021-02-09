@@ -59,9 +59,8 @@ modded class ActionDismantlePart : ActionContinuousBase
 							theFlag.SyncTerritory();
 						}
 						m_CanDismantleHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DISMANTLE);
-						string WarningMessage = "Sorry, you can't dismantle anything this close to a raised flag";
 						if (!m_CanDismantleHere ){
-							GetBasicTerritoriesConfig().SendNotification(WarningMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().DismantleWarningMessage);
 						}
 						return m_CanDismantleHere;
 					}

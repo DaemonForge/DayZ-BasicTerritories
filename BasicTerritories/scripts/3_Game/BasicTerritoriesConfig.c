@@ -25,7 +25,17 @@ class BasicTerritoriesConfig
 	int Notifications = 0; //0 Chat | 1 Notifications Mod
 	
 	ref array< ref BasicTerritoriesNoBuildZones> NoBuildZones = new array< ref BasicTerritoriesNoBuildZones>;
-		
+	
+	string NoBuildZoneMessage = "You can't build here, are trying to build in a designated no build zones";
+	string TerritoryConflictMessage = "Sorry you can't build a territory this close to another territory";
+	string WithinTerritoryWarning = "Sorry you can't build this close to an enemy territory";
+	string DeSpawnWarningMessage = "You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory";
+	string BuildPartWarningMessage = "Sorry, you don't have permissions to build in this area.";
+	string DismantleWarningMessage = "Sorry, you can't dismantle anything this close to a raised flag";
+	string LowerFlagWarningMessage = "Sorry, you do not have permissions to lower the flag in this territory";
+	
+	int FlagRefreshFrequency = 0;
+	ref map<string, int> KitLifeTimes = new map<string, int>;
 	
 	[NonSerialized()]
 	protected int m_BlockWarnPlayer = 0;
@@ -41,6 +51,10 @@ class BasicTerritoriesConfig
 			    JsonFileLoader<BasicTerritoriesConfig>.JsonLoadFile(ConfigPATH, this);
 				if (ConfigVersion != "1"){
 					ConfigVersion = "1";
+					FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
+					KitLifeTimes.Insert("fencekit", 3888000);
+					KitLifeTimes.Insert("watchtowerkit", 3888000);
+					KitLifeTimes.Insert("msp_", 3888000);
 					Save();
 				}
 			}else{ //File does not exist create file
@@ -49,6 +63,7 @@ class BasicTerritoriesConfig
 				}
 				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
 				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
+				FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
 				Save();
 			}
 			if (FileExist(RaidPATH)){
@@ -58,7 +73,6 @@ class BasicTerritoriesConfig
 				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("fence"));
 				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("watchtower"));
 				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("*",false));
-				
 				m_RaidHandlerLoaded = true;
 				SaveRaidHandler();
 			}
@@ -78,7 +92,7 @@ class BasicTerritoriesConfig
 		autoptr JsonSerializer m_Serializer = new JsonSerializer;
 		m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
 
-		autoptr FileHandle fh = OpenFile(RaidPATH, FileMode.READ);
+		FileHandle fh = OpenFile(RaidPATH, FileMode.READ);
 		string jsonData;
 		string error;
 		if (fh) {
@@ -193,7 +207,40 @@ class BasicTerritoriesConfig
 		}
 		return 0;
 	}
+	
+	string NiceExpireTime(float LifeTime){
+		float Hours = Math.Floor(LifeTime / 3600);
+		
+		Print("Hour: " + Hours + " RefreshFrequency:" + FlagRefreshFrequency);
+		int rtnValue = 0;
+		if (LifeTime < FlagRefreshFrequency){
+			return ""; //Means that this items wouldn't get affected by refresh anyways.
+		}
+		int Days = Math.Floor(Hours / 24);
+		int remander = Days % 7;
+		if (remander >= 2){
+			return Days.ToString() + " Days";
+		}
+		int Weeks = Math.Floor(Days / 7);
+		return Weeks.ToString() + " Weeks";
+	}
+	
+	int GetKitLifeTime(string item){
+		item.ToLower();
+		int lt = KitLifeTimes.Get(item);
+		if (lt == 0){
+			foreach (string key, int lifetime : KitLifeTimes){
+				if (item.Contains(key)){
+					return lifetime;
+				}
+			}
+		} else {
+			return lt;
+		}
+		return 0;
+	}
 }
+
 
 class BasicTerritoriesNoBuildZones{
 	float X;

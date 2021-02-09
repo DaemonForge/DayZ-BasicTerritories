@@ -1,6 +1,5 @@
 modded class TentBase extends ItemBase
 {
-	
 	override void EEOnCECreate() {
 		super.EEOnCECreate();
 		Print("[BASICTERRITORIES] Tent spawned in via CE");
@@ -14,7 +13,7 @@ modded class TentBase extends ItemBase
 		float MaxLifetime = GetLifetimeMax();
 		this.SetLifetime(MaxLifetime);
 		float NewLifeTime = GetLifetime();
-		GetCEApi().RadiusLifetimeReset(GetPosition(),GetBasicTerritoriesConfig().TentRadius);
+		GetCEApi().RadiusLifetimeReset(GetPosition(), GetBasicTerritoriesConfig().TentRadius);
 	}
 	
 	override void ToggleAnimation( string selection )

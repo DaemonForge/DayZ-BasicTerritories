@@ -4,9 +4,11 @@ modded class BaseBuildingBase
 	override void EEHitBy(TotalDamageResult damageResult, int damageType, EntityAI source, int component, string dmgZone, string ammo, vector modelPos, float speedCoef)
 	{		
 		super.EEHitBy(damageResult, damageType, source, component, dmgZone, ammo, modelPos, speedCoef);
+		
 		string tool = "";
 		float distance = 0;
 		Print("[Territories] [Debug] BaseBuildingBase EEHitBy Start = = = = = = = = = = = = = = = = = = = = =");
+		
 		if (source){
 			distance = vector.Distance( this.GetPosition(), source.GetPosition());
 			tool = source.GetType();
@@ -19,6 +21,7 @@ modded class BaseBuildingBase
 		} else {
 			Print("[Territories] [Debug] Source: NULL"); 
 		}
+		
 		if ( damageType == DT_EXPLOSION ) {
 			Print("[Territories] [Debug] dmgZone: "+ dmgZone + " ammo: "+ ammo + " damageType: "+ damageType + "(DT_EXPLOSION)");
 		} else if ( damageType == DT_FIRE_ARM ) {
@@ -39,12 +42,11 @@ modded class BaseBuildingBase
 			string zoneNameFZ = FullZonesList.Get(i);
 			zoneNameFZ.ToLower();
 			float beforeHealthFZ = GetHealth(FullZonesList.Get(i), "Health");
-			//Print("[Territories] [Debug] dmgZone: " + zoneNameFZ + " beforeHealthFZ: " + beforeHealthFZ + " Is Built: " +  GetConstruction().IsPartConstructed(zoneNameFZ) );
 			if (beforeHealthFZ > 0 && GetConstruction().IsPartConstructed(zoneNameFZ) ){
 				ZonesWithHealth.Insert(zoneNameFZ);
 			}
-			
 		}
+		
 		//ZonesWithHealth.Debug();
 		for (i = 0; i < FullZonesList.Count(); i++){
 			float zoneDmg = damageResult.GetDamage(FullZonesList.Get(i), "Health");

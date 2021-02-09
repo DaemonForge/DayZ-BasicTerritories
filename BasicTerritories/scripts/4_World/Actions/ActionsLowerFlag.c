@@ -10,7 +10,7 @@ modded class ActionLowerFlag: ActionContinuousBase
 					
 					return true;
 				}else {
-					GetBasicTerritoriesConfig().SendNotification("Sorry, you do not have permissions to lower the flag in this territory");
+					GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().LowerFlagWarningMessage);
 				}
 			}
 		}

@@ -19,7 +19,6 @@ modded class ActionDeployObject : ActionContinuousBase
 				return true;
 			}
 			PlayerBase thePlayer = PlayerBase.Cast(player);
-			
 			if (thePlayer && thePlayer.GetHologramLocal() && thePlayer.GetHologramLocal().GetProjectionEntity()) {
 				
 				if (vector.Distance(m_LastCheckLocation, thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition()) > 0.4){
@@ -50,7 +49,7 @@ modded class ActionDeployObject : ActionContinuousBase
 					if (thePlayer.GetIdentity()) {
 						theGUID = thePlayer.GetIdentity().GetId();
 					}
-					return CanIPlaceHere(item, thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition(), theGUID);
+					return CanIPlaceHere(item, thePlayer.GetHologramLocal().GetProjectionEntity(), thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition(), theGUID);
 				} else {
 					return m_CanPlaceHere;
 				}
@@ -80,24 +79,23 @@ modded class ActionDeployObject : ActionContinuousBase
 	#endif
 	}
 	
-	protected bool CanIPlaceHere(EntityAI item, vector pos, string GUID = ""){
+	protected bool CanIPlaceHere(EntityAI kit, EntityAI item, vector pos, string GUID = ""){
 		m_LastCheckLocation = pos;
-		if (pos == vector.Zero || !item){
+		if (pos == vector.Zero || !item || !kit){
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
-		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos, item.GetType())){
-			string NoBuildZoneWarningMessage = "You can't build here, are trying to build in a designated no build zones";
-			GetBasicTerritoriesConfig().SendNotification(NoBuildZoneWarningMessage);
+		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos, item.GetType()) || !GetBasicTerritoriesConfig().CanBuildHere(pos, kit.GetType()) ){
+			GetBasicTerritoriesConfig().SendNotification( GetBasicTerritoriesConfig().NoBuildZoneMessage);
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
-		}else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) ){
+		} else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) || GetBasicTerritoriesConfig().IsInWhiteList(kit.GetType()) ){
 			m_CanPlaceHere = true;
 			return m_CanPlaceHere;
 		} else {
 			ref array<Object> objects = new array<Object>;
 			ref array<CargoBase> proxyCargos = new array<CargoBase>;
 			float theRadius = GameConstants.REFRESHER_RADIUS * 1.05;
-			if ( item.IsInherited(TerritoryFlagKit) ){
+			if ( kit.IsInherited(TerritoryFlagKit) ){
 				theRadius = GameConstants.REFRESHER_RADIUS * 2.05;
 			}
 			GetGame().GetObjectsAtPosition(pos, theRadius, objects, proxyCargos);
@@ -106,9 +104,8 @@ modded class ActionDeployObject : ActionContinuousBase
 				for (int i = 0; i < objects.Count(); i++ ){
 					if (Class.CastTo( theFlag, objects.Get(i) ) ){
 						
-						if ( item.IsInherited(TerritoryFlagKit) ){
-							string WarningMessage = "Sorry you can't build a territory this close to another territory";
-							GetBasicTerritoriesConfig().SendNotification(WarningMessage);
+						if ( kit.IsInherited(TerritoryFlagKit) ){
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().TerritoryConflictMessage);
 							#ifdef BASICMAP
 							if (BASICT_Marker){
 								BASICT_Marker.SetOverLaping(true);
@@ -122,15 +119,14 @@ modded class ActionDeployObject : ActionContinuousBase
 							theFlag.SyncTerritory();
 						}
 						m_CanPlaceHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DEPLOY);
-						string DeployWarningMessage = "Sorry you can't build this close to an enemy territory";
 						if (!m_CanPlaceHere){
-							GetBasicTerritoriesConfig().SendNotification(DeployWarningMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().WithinTerritoryWarning);
 						}
 						return m_CanPlaceHere;
 					}
 				}
 			} 
-			if (item && item.IsInherited(TerritoryFlagKit) ){
+			if (kit && kit.IsInherited(TerritoryFlagKit) ){
 				#ifdef BASICMAP
 				if (BASICT_Marker){
 					BASICT_Marker.SetOverLaping(false);
@@ -138,8 +134,35 @@ modded class ActionDeployObject : ActionContinuousBase
 				#endif
 			}
 		}
-		string DeSpawnWarningMessage = "You are building outside a territory, Base Building objects will despawn in two weeks without a Territory";
-		GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
+		string DeSpawnWarningMessage = GetBasicTerritoriesConfig().DeSpawnWarningMessage;
+		int LifeTime = 0;
+		int itemLifetime = 0;
+		ItemBase theItem;
+		ItemBase theKit;
+		string ItemName = kit.GetDisplayName();
+		
+		theItem = ItemBase.Cast(item);
+		itemLifetime = GetBasicTerritoriesConfig().GetKitLifeTime(theItem.GetType());
+		if (itemLifetime <= 0 && theItem){
+			itemLifetime =  theItem.GetTSyncedLifeTime();
+		}
+		theKit = ItemBase.Cast(kit);
+		LifeTime = GetBasicTerritoriesConfig().GetKitLifeTime(theKit.GetType());
+		if (LifeTime <= 0 && theKit){
+			LifeTime =  theKit.GetTSyncedLifeTime();
+		}
+		//Print("The Item: " + theItem.GetType() + " TSynced: " + theItem.GetTSyncedLifeTime()  + " TheKit: " + theKit.GetType() + " TSynced: " + theKit.GetTSyncedLifeTime() );
+		if (itemLifetime > LifeTime){
+			LifeTime = itemLifetime;
+			ItemName = item.GetDisplayName();
+		} 
+		GetBasicTerritoriesConfig().GetKitLifeTime(kit.GetType());
+		string NiceExpireTime = GetBasicTerritoriesConfig().NiceExpireTime(LifeTime);
+		if (NiceExpireTime != ""){
+			DeSpawnWarningMessage.Replace("$LIFETIME$", NiceExpireTime);
+			DeSpawnWarningMessage.Replace("$ITEMNAME$", ItemName); 
+			GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
+		}
 		m_CanPlaceHere = true;
 		return m_CanPlaceHere;
 	}
