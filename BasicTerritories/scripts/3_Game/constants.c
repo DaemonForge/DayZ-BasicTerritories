@@ -1,7 +1,3 @@
-modded class GameConstants {
-	const float REFRESHER_RADIUS = 50; 				//meters
-}
-
 class TerritoryPerm {
 	
 	static int DEFAULTOWNER = 1;

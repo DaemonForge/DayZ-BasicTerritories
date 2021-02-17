@@ -2,11 +2,15 @@ modded class MissionServer extends MissionBase
 {
 	override void OnInit() {
 		super.OnInit();
-		
-		Print("[BasicTerritories] OnInit");
-		GetBasicTerritoriesConfig();
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.OnTerritoryInit, 500, false); //Delay so CE is Initialized 
 		GetRPCManager().AddRPC( "BASICT", "RPCBasicTerritoriesModSettings", this, SingeplayerExecutionType.Both );
 	}
+	
+	void OnTerritoryInit(){
+		Print("[BasicTerritories] OnInit");
+		GetBasicTerritoriesConfig();
+	}
+	
 	
 	void RPCBasicTerritoriesModSettings( CallType type, ref ParamsReadContext ctx, ref PlayerIdentity sender, ref Object target ) {
 		PlayerIdentity RequestedBy = PlayerIdentity.Cast(sender);

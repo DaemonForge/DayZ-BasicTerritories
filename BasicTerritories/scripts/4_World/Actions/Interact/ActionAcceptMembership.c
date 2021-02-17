@@ -21,7 +21,7 @@ class ActionAcceptMembership extends ActionInteractBase
 		if (ident && theFlag){
 			float state = theFlag.GetAnimationPhase("flag_mast");
 			if (theFlag.FindAttachmentBySlotName("Material_FPole_Flag") && state < TerritoryConst.FLAGUPSTATE){
-				IsMember = theFlag.IsTerritoryMember(ident.GetId());
+				IsMember = (theFlag.IsTerritoryMember(ident.GetId()) && !theFlag.CanReceiveNewOwner());
 				if (theFlag.CanAddMember() && !IsMember){
 					return true;
 				} else if (IsMember && !theFlag.IsTerritoryOwner(ident.GetId())){

@@ -18,6 +18,8 @@ class BasicTerritoriesConfig
 		
 	float BuildBonusSledgeDamage = 300;
 	
+	bool RequireTerritory = false;
+	
 	int PublicPermissions = TerritoryPerm.PUBLIC;
 	
 	int MemberPermissions = TerritoryPerm.DEFAULTMEMBER;
@@ -33,8 +35,10 @@ class BasicTerritoriesConfig
 	string BuildPartWarningMessage = "Sorry, you don't have permissions to build in this area.";
 	string DismantleWarningMessage = "Sorry, you can't dismantle anything this close to a raised flag";
 	string LowerFlagWarningMessage = "Sorry, you do not have permissions to lower the flag in this territory";
+	string TerritoryRequiredWarningMessage = "Sorry, you are required to build a territory to be able to build";
 	
 	int FlagRefreshFrequency = 0;
+	
 	ref map<string, int> KitLifeTimes = new map<string, int>;
 	
 	[NonSerialized()]
@@ -44,19 +48,15 @@ class BasicTerritoriesConfig
 	[NonSerialized()]
 	protected bool m_RaidHandlerLoaded = false;
 	
+	[NonSerialized()]
+	int m_disableBaseDamage = 0;
+	
 	void Load(){
 		Print("[BasicTerritories] Loading Config");
 		if (GetGame().IsServer()){
 			if (FileExist(ConfigPATH)){ //If config exist load File
 			    JsonFileLoader<BasicTerritoriesConfig>.JsonLoadFile(ConfigPATH, this);
-				if (ConfigVersion != "1"){
-					ConfigVersion = "1";
-					FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
-					KitLifeTimes.Insert("fencekit", 3888000);
-					KitLifeTimes.Insert("watchtowerkit", 3888000);
-					KitLifeTimes.Insert("msp_", 3888000);
-					Save();
-				}
+				Save();
 			}else{ //File does not exist create file
 				if (!FileExist(DirPATH)){
 					MakeDirectory(DirPATH);
@@ -64,19 +64,30 @@ class BasicTerritoriesConfig
 				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
 				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
 				FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
+				if (FlagRefreshFrequency <= 0){
+					FlagRefreshFrequency = GameConstants.REFRESHER_FREQUENCY_DEFAULT;
+				}
+				KitLifeTimes.Insert("fencekit", 3888000);
+				KitLifeTimes.Insert("watchtowerkit", 3888000);
+				KitLifeTimes.Insert("msp_", 3888000);
 				Save();
 			}
-			if (FileExist(RaidPATH)){
-				LoadRaidHandler();
+			m_disableBaseDamage = GetGame().ServerConfigGetInt("disableBaseDamage");
+			if( m_disableBaseDamage < 1){
+				Print("[BasicTerritories] BaseDamage [Enabled]");	
+				if (FileExist(RaidPATH)){
+					LoadRaidHandler();
+				} else {
+					m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
+					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("fence"));
+					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("watchtower"));
+					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("*",false));
+					m_RaidHandlerLoaded = true;
+					SaveRaidHandler();
+				}
 			} else {
-				m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
-				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("fence"));
-				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("watchtower"));
-				m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("*",false));
-				m_RaidHandlerLoaded = true;
-				SaveRaidHandler();
+				Print("[BasicTerritories] BaseDamage [Disabled]");	
 			}
-			
 		}
 	}
 	
@@ -84,9 +95,13 @@ class BasicTerritoriesConfig
 		JsonFileLoader<BasicTerritoriesConfig>.JsonSaveFile(ConfigPATH, this);
 	}
 
+	int disableBaseDamage(){
+		return m_disableBaseDamage;
+	}
+	
 	void LoadRaidHandler(){
 		if (!FileExist(RaidPATH)) {
-			Print("File At" + RaidPATH + " could not be found");
+			Print("[BasicTerritories] File At" + RaidPATH + " could not be found");
 			return;
 		}
 		autoptr JsonSerializer m_Serializer = new JsonSerializer;
@@ -183,7 +198,7 @@ class BasicTerritoriesConfig
 	}
 	
 	float GetHealBack(float dmg, string type, int dmgType, string tool, string ammo, string part, TStringArray PartsWithHealth = NULL, float distance = 0){
-		if (!m_RaidHandlerLoaded || !GetRaidHandlers()){
+		if (!m_RaidHandlerLoaded || !GetRaidHandlers() ||  m_disableBaseDamage < 1){
 			return 0;
 		}
 		bool totalDmgSet = false;

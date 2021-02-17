@@ -188,6 +188,16 @@ modded class TerritoryFlag extends BaseBuildingBase
 		}
 	}
 		
+	bool HasRaisedFlag(){
+		if (FindAttachmentBySlotName("Material_FPole_Flag")){
+			float state = GetAnimationPhase("flag_mast");
+			if (state <= TerritoryConst.FLAGDOWNSTATE){
+				return true;
+			}
+		}
+		return false;
+	}
+		
 	bool CheckPlayerPermission(string guid, int permission){
 		int publicPerms = GetBasicTerritoriesConfig().PublicPermission();
 		int PermsCheck = publicPerms & permission;
@@ -196,11 +206,8 @@ modded class TerritoryFlag extends BaseBuildingBase
 			//Print("[BasicTerritory] Action is in public permissions");
 			return true;
 		}
-		if (FindAttachmentBySlotName("Material_FPole_Flag")){
-			float state = GetAnimationPhase("flag_mast");
-			if (state <= TerritoryConst.FLAGDOWNSTATE){
-				return m_TerritoryMembers.Check(guid, permission);
-			}
+		if (HasRaisedFlag()){
+			return m_TerritoryMembers.Check(guid, permission);
 		}
 		return true;
 	}
