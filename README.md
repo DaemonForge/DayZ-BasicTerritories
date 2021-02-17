@@ -1,5 +1,6 @@
 # BasicTerritories
-This is a Basic Territories mod, expanding on the vanilla flag pole, this mod is basic and is going to stay this way, for a more full featured version that will come in a future base build plus update. With this mod you can
+This is a Basic Territories mod, expanding on the vanilla flag pole, this mod is basic and is going to stay this way, for a more full featured version that will come in a future base build plus update. 
+With this mod you can
 - Claim Territory Flags (Yes Existing Flags Can be Claimed)
 - Add Members to the Territory, via the Add Member Action the Other Player Must then go up and accept the membership
 - Restrict Build areas via the config
