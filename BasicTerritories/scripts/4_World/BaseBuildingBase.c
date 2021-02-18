@@ -33,7 +33,7 @@ modded class BaseBuildingBase
 				if (zoneDmg > 0){
 					float HealBackAmount = GetBasicTerritoriesConfig().GetHealBack(zoneDmg, this.GetType(), damageType, tool, ammo, zoneName, ZonesWithHealth, distance);
 					AddHealth(zoneName, "Health", HealBackAmount);
-					float resultingDamage = zoneDmg + HealBackAmount;
+					float resultingDamage = zoneDmg - HealBackAmount;
 					if (player && player.GetIdentity()){
 						GetGame().AdminLog("[Territories] Source: " +  source.GetType() + " from: " + distance + "m held by player: " +  player.GetIdentity().GetName() + "(" +  player.GetIdentity().GetId() + ") Zone: " + zoneName + "  Damage: " + resultingDamage + "  Current Health: " + this.GetHealth(zoneName, "Health"));
 					} else {
