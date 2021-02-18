@@ -32,12 +32,25 @@ modded class BaseBuildingBase
 				float beforeHealth = GetHealth(zoneName, "Health");
 				if (zoneDmg > 0){
 					float HealBackAmount = GetBasicTerritoriesConfig().GetHealBack(zoneDmg, this.GetType(), damageType, tool, ammo, zoneName, ZonesWithHealth, distance);
-					AddHealth(zoneName, "Health", HealBackAmount);
-					float resultingDamage = zoneDmg - HealBackAmount;
-					if (player && player.GetIdentity()){
-						GetGame().AdminLog("[Territories] Source: " +  source.GetType() + " from: " + distance + "m held by player: " +  player.GetIdentity().GetName() + "(" +  player.GetIdentity().GetId() + ") Zone: " + zoneName + "  Damage: " + resultingDamage + "  Current Health: " + this.GetHealth(zoneName, "Health"));
-					} else {
-						GetGame().AdminLog("[Territories] Source: " +  source.GetType() + " from: " + distance + "m Zone: " + zoneName + "  Damage: " + resultingDamage + "  Current Health: " + this.GetHealth(zoneName, "Health"));
+					
+					float resultingDamage = zoneDmg;
+					if (HealBackAmount > 0){
+						if (HealBackAmount > zoneDmg){
+							HealBackAmount = zoneDmg;
+						}
+						AddHealth(zoneName, "Health", HealBackAmount);
+						resultingDamage = zoneDmg - HealBackAmount;
+					} else if (HealBackAmount < 0) {
+						HealBackAmount = 0 - HealBackAmount;
+						resultingDamage = zoneDmg + HealBackAmount;
+						DecreaseHealth(zoneName, "Health", HealBackAmount);
+					}
+					if (resultingDamage > 0){
+						if (player && player.GetIdentity()){
+							GetGame().AdminLog("[Territories] Source: " +  source.GetType() + " from: " + distance + "m held by player: " +  player.GetIdentity().GetName() + "(" +  player.GetIdentity().GetId() + ") Zone: " + zoneName + "  Damage: " + resultingDamage + "  Current Health: " + this.GetHealth(zoneName, "Health"));
+						} else {
+							GetGame().AdminLog("[Territories] Source: " +  source.GetType() + " from: " + distance + "m Zone: " + zoneName + "  Damage: " + resultingDamage + "  Current Health: " + this.GetHealth(zoneName, "Health"));
+						}
 					}
 				}
 			}

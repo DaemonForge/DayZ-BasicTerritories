@@ -198,7 +198,7 @@ class BasicTerritoriesConfig
 	}
 	
 	float GetHealBack(float dmg, string type, int dmgType, string tool, string ammo, string part, TStringArray PartsWithHealth = NULL, float distance = 0){
-		if (!m_RaidHandlerLoaded || !GetRaidHandlers() ||  m_disableBaseDamage < 1){
+		if (!m_RaidHandlerLoaded || !GetRaidHandlers() ||  m_disableBaseDamage > 0){
 			return 0;
 		}
 		bool totalDmgSet = false;
