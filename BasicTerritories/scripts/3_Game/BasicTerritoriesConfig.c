@@ -28,14 +28,14 @@ class BasicTerritoriesConfig
 	
 	ref array< ref BasicTerritoriesNoBuildZones> NoBuildZones = new array< ref BasicTerritoriesNoBuildZones>;
 	
-	string NoBuildZoneMessage = "You can't build here, are trying to build in a designated no build zones";
-	string TerritoryConflictMessage = "Sorry you can't build a territory this close to another territory";
-	string WithinTerritoryWarning = "Sorry you can't build this close to an enemy territory";
-	string DeSpawnWarningMessage = "You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory";
-	string BuildPartWarningMessage = "Sorry, you don't have permissions to build in this area.";
-	string DismantleWarningMessage = "Sorry, you can't dismantle anything this close to a raised flag";
-	string LowerFlagWarningMessage = "Sorry, you do not have permissions to lower the flag in this territory";
-	string TerritoryRequiredWarningMessage = "Sorry, you are required to build a territory to be able to build";
+	string NoBuildZoneMessage = " You can't build here, you are trying to build in a designated no build zone";
+	string TerritoryConflictMessage = " Sorry you can't build a territory this close to another territory";
+	string WithinTerritoryWarning = " Sorry you can't build this close to an enemy territory";
+	string DeSpawnWarningMessage = " You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory";
+	string BuildPartWarningMessage = " Sorry, you don't have permissions to build in this area.";
+	string DismantleWarningMessage = " Sorry, you can't dismantle anything this close to a raised flag";
+	string LowerFlagWarningMessage = " Sorry, you do not have permissions to lower the flag in this territory";
+	string TerritoryRequiredWarningMessage = " Sorry, you are required to build a territory to be able to build";
 	
 	int FlagRefreshFrequency = 0;
 	
