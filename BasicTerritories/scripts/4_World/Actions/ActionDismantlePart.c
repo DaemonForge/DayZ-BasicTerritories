@@ -60,7 +60,7 @@ modded class ActionDismantlePart : ActionContinuousBase
 						}
 						m_CanDismantleHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DISMANTLE);
 						if (!m_CanDismantleHere ){
-							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().DismantleWarningMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().DismantleWarningMessage, TerritoryIcons.DismantleWarning);
 						}
 						return m_CanDismantleHere;
 					}

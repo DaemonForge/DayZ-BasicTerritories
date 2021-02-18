@@ -83,7 +83,7 @@ modded class ActionBuildPart: ActionContinuousBase
 						}
 						m_CanBuildHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.BUILD);
 						if (!m_CanBuildHere){
-							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().BuildPartWarningMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().BuildPartWarningMessage, TerritoryIcons.BuildPartWarning);
 						}
 						return m_CanBuildHere;
 					}

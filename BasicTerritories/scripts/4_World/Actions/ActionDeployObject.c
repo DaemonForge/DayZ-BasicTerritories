@@ -85,7 +85,7 @@ modded class ActionDeployObject : ActionContinuousBase
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
 		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos, item.GetType()) || !GetBasicTerritoriesConfig().CanBuildHere(pos, kit.GetType()) ){
-			GetBasicTerritoriesConfig().SendNotification( GetBasicTerritoriesConfig().NoBuildZoneMessage);
+			GetBasicTerritoriesConfig().SendNotification( GetBasicTerritoriesConfig().NoBuildZoneMessage, TerritoryIcons.NoBuildZone);
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
 		} else if ( GetBasicTerritoriesConfig().IsInWhiteList(item.GetType()) || GetBasicTerritoriesConfig().IsInWhiteList(kit.GetType()) ){
@@ -104,7 +104,7 @@ modded class ActionDeployObject : ActionContinuousBase
 				for (int i = 0; i < objects.Count(); i++ ){
 					if ( Class.CastTo( theFlag, objects.Get(i) ) ){
 						if ( kit.IsInherited(TerritoryFlagKit) ){
-							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().TerritoryConflictMessage);
+							GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().TerritoryConflictMessage, TerritoryIcons.TerritoryConflict);
 							#ifdef BASICMAP
 							if (BASICT_Marker){
 								BASICT_Marker.SetOverLaping(true);
@@ -120,7 +120,7 @@ modded class ActionDeployObject : ActionContinuousBase
 							}
 							m_CanPlaceHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DEPLOY);
 							if (!m_CanPlaceHere){
-								GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().WithinTerritoryWarning);
+								GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().WithinTerritoryWarning, TerritoryIcons.WithinTerritory);
 							}
 							return m_CanPlaceHere;
 						}
@@ -139,7 +139,7 @@ modded class ActionDeployObject : ActionContinuousBase
 		}
 		if (GetBasicTerritoriesConfig().RequireTerritory){
 			
-			GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().TerritoryRequiredWarningMessage);
+			GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().TerritoryRequiredWarningMessage, TerritoryIcons.TerritoryRequiredWarning);
 			m_CanPlaceHere = false;
 			
 		} else {
@@ -170,7 +170,7 @@ modded class ActionDeployObject : ActionContinuousBase
 			if (NiceExpireTime != ""){
 				DeSpawnWarningMessage.Replace("$LIFETIME$", NiceExpireTime);
 				DeSpawnWarningMessage.Replace("$ITEMNAME$", ItemName); 
-				GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, "BasicTerritories/images/Build.paa");
+				GetBasicTerritoriesConfig().SendNotification(DeSpawnWarningMessage, TerritoryIcons.DeSpawnWarning);
 			}
 			m_CanPlaceHere = true;
 		}

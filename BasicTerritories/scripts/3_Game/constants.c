@@ -23,3 +23,16 @@ class TerritoryPerm {
 	static int DEPLOYSPECIAL = 128; // 1000 0000   // Going to be a item white list
 	
 }
+
+class TerritoryIcons {
+	
+	static string NoBuildZone = "BasicTerritories/images/NoBuild.paa";
+	static string TerritoryConflict = "BasicTerritories/images/NoBuild.paa";
+	static string WithinTerritory = "BasicTerritories/images/NoBuild.paa";
+	static string DeSpawnWarning = "BasicTerritories/images/Build.paa";
+	static string BuildPartWarning = "BasicTerritories/images/NoBuild.paa";
+	static string DismantleWarning = "BasicTerritories/images/NoBuild.paa";
+	static string LowerFlagWarning = "BasicTerritories/images/NoBuild.paa";
+	static string TerritoryRequiredWarning = "BasicTerritories/images/NoBuild.paa";
+	
+}

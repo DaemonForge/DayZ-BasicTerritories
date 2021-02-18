@@ -10,7 +10,7 @@ modded class ActionLowerFlag: ActionContinuousBase
 					
 					return true;
 				}else {
-					GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().LowerFlagWarningMessage);
+					GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().LowerFlagWarningMessage, TerritoryIcons.LowerFlagWarning);
 				}
 			}
 		}
