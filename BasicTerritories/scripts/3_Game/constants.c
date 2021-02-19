@@ -22,6 +22,7 @@ class TerritoryPerm {
 	
 	static int DEPLOYSPECIAL = 128; // 1000 0000   // Going to be a item white list
 	
+	
 }
 
 class TerritoryIcons {
