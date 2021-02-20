@@ -25,7 +25,7 @@ class cfgVehicles
 					required_parts[] = {};
 					conflicted_parts[] = {};
 					collision_data[] = {"base_min","base_max"};
-					build_action_type = 16;
+					build_action_type = 16; //Change to 36 to make it buildable with shovel or 52 to make it buildable with shovel and sledge
 					dismantle_action_type = 16;
 					material_type = 1;
 					class Materials
@@ -55,14 +55,14 @@ class cfgVehicles
 						{
 							type = "Stone";
 							slot_name = "Material_FPole_Stones";
-							quantity = 18;
+							quantity = 18;  //Change this to change stones
 							lockable = 0;
 						};
 						class Material2
 						{
 							type = "WoodenLog";
 							slot_name = "Material_FPole_WoodenLog2";
-							quantity = 6;
+							quantity = 6; //Change this to change logs stage 2
 							lockable = 0;
 						};
 					};
@@ -115,12 +115,29 @@ class cfgVehicles
 };
 class CfgSlots
 {
+	
 	class Slot_Material_FPole_Stones
 	{
 		name = "Material_FPole_Stones";
 		displayName = "Material_FPole_Stones";
 		selection = "Material_FPole_Stones";
 		ghostIcon = "stones";
-		stackMax = 18;
+		stackMax = 18; //you also need to change this
 	};
+	/*
+    class Slot_Material_FPole_WoodenLog2
+    {
+        name = "Material_FPole_WoodenLog2";
+        displayName = "Material_FPole_WoodenLog2";
+        selection = "Material_FPole_WoodenLog2";
+        ghostIcon = "woodenlog";
+        stackMax = 6; //Change this for logs
+    };
+	
+	
+	
+	
+	
+	
+	*/
 };
