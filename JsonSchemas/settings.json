@@ -1,5 +1,51 @@
 {
     "type": "object",
+	"default":{
+		"ConfigVersion": "1",
+		"WhiteList": [
+			"Trap",
+			"Paper",
+			"Fireplace"
+		],
+		"ServerAdmins": [
+			"GUID"
+		],
+		"TentRadius": 6.0,
+		"TentCESpawnLifeTime": 5600.0,
+		"BuildBonusSledgeDamage": 300.0,
+		"RequireTerritory": 0,
+		"PublicPermissions": 20,
+		"MemberPermissions": 30,
+		"Notifications": 0,
+		"NoBuildZones": [
+			{
+				"X": 3703.5,
+				"Z": 5985.10986328125,
+				"R": 100.0,
+				"DrawOnMap": 0
+			},
+			{
+				"X": 8345.6103515625,
+				"Z": 5985.93017578125,
+				"R": 100.0,
+				"DrawOnMap": 0
+			}
+		],
+		"NoBuildZoneMessage": " You can't build here, you are trying to build in a designated no build zone",
+		"TerritoryConflictMessage": " Sorry you can't build a territory this close to another territory",
+		"WithinTerritoryWarning": " Sorry you can't build this close to an enemy territory",
+		"DeSpawnWarningMessage": " You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory",
+		"BuildPartWarningMessage": " Sorry, you don't have permissions to build in this area.",
+		"DismantleWarningMessage": " Sorry, you can't dismantle anything this close to a raised flag",
+		"LowerFlagWarningMessage": " Sorry, you do not have permissions to lower the flag in this territory",
+		"TerritoryRequiredWarningMessage": " Sorry, you are required to build a territory to be able to build",
+		"FlagRefreshFrequency": 432000,
+		"KitLifeTimes": {
+			"watchtowerkit": 3888000,
+			"fencekit": 3888000,
+			"msp_": 3888000
+		}
+	},
     "required": [
         "ConfigVersion",
         "WhiteList",

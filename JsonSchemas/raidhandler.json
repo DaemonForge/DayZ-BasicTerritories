@@ -1,5 +1,106 @@
 {
     "type": "array",
+	"default": [
+		{
+			"TypeName": "fence",
+			"FireArms": 0.30000001192092898,
+			"Melee": 0.10000000149011612,
+			"Explosive": 1.0,
+			"Other": 0.0,
+			"ToolsFirst": 1,
+			"PartModifier": [
+				{
+					"Part": "wall_wood_",
+					"Modifier": 1.2000000476837159,
+					"WhiteList": [],
+					"RequiredDestroyed": []
+				},
+				{
+					"Part": "wall_metal_",
+					"Modifier": 0.699999988079071,
+					"WhiteList": [
+						"m67Grenade",
+						"rgd5grenade",
+						"landminetrap"
+					],
+					"RequiredDestroyed": []
+				},
+				{
+					"Part": "*",
+					"Modifier": 1.0,
+					"WhiteList": [],
+					"RequiredDestroyed": []
+				}
+			],
+			"ToolModifiers": [
+				{
+					"Tool": "sledgehammer",
+					"Modifier": 100.0,
+					"MinDmg": 0.0,
+					"MaxDmg": 21000.0,
+					"MaxDistance": -1.0
+				}
+			]
+		},
+		{
+			"TypeName": "watchtower",
+			"FireArms": 0.30000001192092898,
+			"Melee": 0.10000000149011612,
+			"Explosive": 1.0,
+			"Other": 0.0,
+			"ToolsFirst": 1,
+			"PartModifier": [
+				{
+					"Part": "wall_wood_",
+					"Modifier": 1.2000000476837159,
+					"WhiteList": [],
+					"RequiredDestroyed": []
+				},
+				{
+					"Part": "wall_metal_",
+					"Modifier": 0.699999988079071,
+					"WhiteList": [
+						"m67Grenade",
+						"rgd5grenade",
+						"landminetrap"
+					],
+					"RequiredDestroyed": []
+				},
+				{
+					"Part": "*",
+					"Modifier": 1.0,
+					"WhiteList": [],
+					"RequiredDestroyed": []
+				}
+			],
+			"ToolModifiers": [
+				{
+					"Tool": "sledgehammer",
+					"Modifier": 100.0,
+					"MinDmg": 0.0,
+					"MaxDmg": 21000.0,
+					"MaxDistance": -1.0
+				}
+			]
+		},
+		{
+			"TypeName": "*",
+			"FireArms": 0.30000001192092898,
+			"Melee": 0.10000000149011612,
+			"Explosive": 1.0,
+			"Other": 0.0,
+			"ToolsFirst": 1,
+			"PartModifier": [
+				{
+					"Part": "*",
+					"Modifier": 1.0,
+					"WhiteList": [],
+					"RequiredDestroyed": []
+				}
+			],
+			"ToolModifiers": []
+		}
+	],
     "items": {
       "type": "object",
       "required": ["TypeName","FireArms","Melee","Explosive","Other","ToolsFirst","PartModifier"],
