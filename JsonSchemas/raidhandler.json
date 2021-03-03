@@ -1,0 +1,91 @@
+{
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": ["TypeName","FireArms","Melee","Explosive","Other","ToolsFirst","PartModifier"],
+      "additionalProperties": false,
+      "properties": {
+        "TypeName": {
+          "type": "string"
+        },
+        "FireArms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Melee": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Explosive": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Other": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ToolsFirst": {
+          "type": "number",
+          "enum":[0,1]
+        },
+        "PartModifier": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["Part","Modifier","WhiteList","RequiredDestroyed"],
+            "additionalProperties": false,
+            "properties": {
+              "Part": {
+                "type": "string"
+              },
+              "Modifier": {
+                "type": "number",
+                "minimum": 0
+              },
+              "WhiteList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "RequiredDestroyed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "ToolModifiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["Tool","Modifier","MinDmg","MaxDmg","MaxDistance"],
+            "additionalProperties": false,
+            "properties": {
+              "Tool": {
+                "type": "string"
+              },
+              "Modifier": {
+                "type": "number",
+                "minimum": 0
+              },
+              "MinDmg": {
+                "type": "number",
+                "minimum": 0
+              },
+              "MaxDmg": {
+                "type": "number",
+                "minimum": 0
+              },
+              "MaxDistance": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }

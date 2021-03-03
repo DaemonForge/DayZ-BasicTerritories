@@ -1,0 +1,205 @@
+{
+    "type": "object",
+    "required": [
+        "ConfigVersion",
+        "WhiteList",
+        "ServerAdmins",
+        "TentRadius",
+        "TentCESpawnLifeTime",
+        "BuildBonusSledgeDamage",
+        "RequireTerritory",
+        "PublicPermissions",
+        "MemberPermissions",
+        "Notifications",
+        "NoBuildZones",
+        "NoBuildZoneMessage",
+        "TerritoryConflictMessage",
+        "WithinTerritoryWarning",
+        "DeSpawnWarningMessage",
+        "BuildPartWarningMessage",
+        "DismantleWarningMessage",
+        "LowerFlagWarningMessage",
+        "TerritoryRequiredWarningMessage",
+        "FlagRefreshFrequency",
+        "KitLifeTimes"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "ConfigVersion": {
+        "type": "string",
+        "pattern": "[0-9]{1,2}",
+        "description": "The version for the config file, this is used to auto upgrade the file in the future"
+      },
+      "WhiteList": {
+        "type": "array",
+        "description": "A white list of items that can be placed anywhere",
+        "items": {
+          "type": "string"
+        }
+      },
+      "ServerAdmins": {
+        "type": "array",
+        "description": "A list of admin GUIDs you can get these from https://daemonforge.dev/SteamId/ (expand more details)",
+        "items": {
+          "type": "string",
+          "pattern": "[A-Za-z0-9\/_-]{43}[=]"
+        }
+      },
+      "TentRadius": {
+        "type": "number",
+        "description": "the radius of which tents refresh on the open and close action",
+        "minimum": -1
+      },
+      "TentCESpawnLifeTime": {
+        "type": "number",
+        "description": "The lifetime set to tents when they spawn in via CE (to help keep them cycling)",
+        "minimum": 0
+      },
+      "BuildBonusSledgeDamage": {
+        "type": "number",
+        "description": "Bonus Damage done to Seldge Hammers when building a territory",
+        "minimum": 0
+      },
+      "RequireTerritory": {
+        "type": "number",
+        "description": "1 Enabled | 0 Disabled  When Enabled it will require players to first build a territory flag before placing any objects",
+        "enum":[0,1]
+      },
+      "PublicPermissions": {
+        "type": "number",
+        "description": "This it the permissions players will have when inside a territory they *are not* members of use https://daemonforge.dev/Calc to figure out the permissions",
+        "examples": [
+            20
+         ]
+      },
+      "MemberPermissions": {
+        "type": "number",
+        "description": "This it the permissions players will have when inside a territory they *are* members of use https://daemonforge.dev/Calc to figure out the permissions",
+        "examples": [
+            30
+        ]
+      },
+      "Notifications": {
+        "type": "number",
+        "description": "0 use Text Notifications, 1 use Notifications from the Notifications Mod",
+        "enum":[0,1]
+      },
+      "NoBuildZones": {
+        "type": "array",
+        "description": "An array for No Build Zones",
+        "items": {
+          "type": "object",
+          "required": ["X","Z","R","DrawOnMap"],
+          "additionalProperties": false,
+          "properties": {
+            "X": {
+              "type": "number",
+              "description": "The X cordinate for the no build zone",
+              "minimum": 0
+            },
+            "Z": {
+              "type": "number",
+              "description": "The Y cordinate for the no build zone",
+              "minimum": 0
+            },
+            "R": {
+              "type": "number",
+              "description": "The Radius for the no build zone",
+              "minimum": 0
+            },
+            "DrawOnMap": {
+              "type": "number",
+              "description": "1 Enabled | 0 Disabled if enabled it will show the no build zone on the map",
+              "enum":[0,1]
+            }
+          }
+        }
+      },
+      "NoBuildZoneMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to build in a no build zone",
+        "examples": [
+            "You can't build here, are trying to build in a designated no build zones",
+            "No puedes construir aquí"
+        ]
+      },
+      "TerritoryConflictMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to build a Territory too close to another Territory",
+        "examples": [
+            "Sorry you can't build a territory this close to another territory",
+            "Lo siento, estás demasiado cerca de otro territorio, no puedes crear uno aquí"
+        ]
+      },
+      "WithinTerritoryWarning": {
+        "type": "string",
+        "description": "The message Players recieve when they try to place an object within a territoty you don't have permissions to deploy",
+        "examples": [
+            "Sorry you can't build this close to an enemy territory",
+            "Lo siento, no puedes construir tan cerca de un territorio enemigo"
+        ]
+      },
+      "DeSpawnWarningMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to build something outside a territory",
+        "examples": [
+            "You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory",
+            "Estás construyendo fuera de tu territorio, $ITEMNAME$ desaparecerá en $LIFETIME$ fuera de tu territorio"
+        ]
+      },
+      "BuildPartWarningMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to build within a territoty you don't have permissions to build",
+        "examples": [
+            "Sorry, you don't have permissions to build in this area.",
+            "Lo siento, no tienes permiso para construir en este sitio"
+        ]
+      },
+      "DismantleWarningMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to dismantle within a territoty you don't have permissions to dismantle",
+        "examples": [
+            "Sorry, you can't dismantle anything this close to a raised flag",
+            "Lo siento, pero no puedes desmontar nada que este cerca de la bandera izada"
+        ]
+      },
+      "LowerFlagWarningMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they try to lower a flag within a territoty you don't have permissions to lower flag",
+        "examples": [
+            "Sorry, you do not have permissions to lower the flag in this territory",
+            "Lo siento, no tienes permisos para bajar la bandera de este territorio"
+        ]
+      },
+      "TerritoryRequiredWarningMessage": {
+        "type": "string",
+        "description": "The message Players recieve when they trying to build outside a territory when require territory is enabled",
+        "examples": [
+            "Sorry, you are required to build a territory to be able to build",
+            "Lo siento, se necesita un territorio para poder construir"
+        ]
+      },
+      "FlagRefreshFrequency": {
+        "type": "number",
+        "description": "This is to match the 'FlagRefreshFrequency' inside your globals.xml if an object has a lifetime less than this it won't warn the player when placing",
+        "default": 432000, 
+        "minimum": 0
+      },
+      "KitLifeTimes": {
+        "type": "object",
+        "description": "These are the lifetime overrides for when a kit has a different lifetime the object it self, so that way the warning about lifetimes is correct",
+        "required": [],
+        "additionalProperties": { "type": "integer", "minimum": 0 },
+        "properties": {
+          "watchtowerkit": {
+            "type": "integer", 
+            "minimum": 0
+          },
+          "fencekit": {
+            "type": "integer", 
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
