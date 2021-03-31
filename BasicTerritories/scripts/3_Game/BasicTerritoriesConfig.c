@@ -61,8 +61,8 @@ class BasicTerritoriesConfig
 				if (!FileExist(DirPATH)){
 					MakeDirectory(DirPATH);
 				}
-				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
-				NoBuildZones.Insert(new ref BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
+				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
+				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
 				FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
 				if (FlagRefreshFrequency <= 0){
 					FlagRefreshFrequency = GameConstants.REFRESHER_FREQUENCY_DEFAULT;
@@ -78,10 +78,10 @@ class BasicTerritoriesConfig
 				if (FileExist(RaidPATH)){
 					LoadRaidHandler();
 				} else {
-					m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
-					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("fence"));
-					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("watchtower"));
-					m_BasicTerritoriesRaidHandlers.Insert(new ref BasicRaidHandler("*",false));
+					m_BasicTerritoriesRaidHandlers = new array<ref BasicRaidHandler>;
+					m_BasicTerritoriesRaidHandlers.Insert(new BasicRaidHandler("fence"));
+					m_BasicTerritoriesRaidHandlers.Insert(new BasicRaidHandler("watchtower"));
+					m_BasicTerritoriesRaidHandlers.Insert(new BasicRaidHandler("*",false));
 					m_RaidHandlerLoaded = true;
 					SaveRaidHandler();
 				}
@@ -105,7 +105,7 @@ class BasicTerritoriesConfig
 			return;
 		}
 		autoptr JsonSerializer m_Serializer = new JsonSerializer;
-		m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
+		m_BasicTerritoriesRaidHandlers = new array<ref BasicRaidHandler>;
 
 		FileHandle fh = OpenFile(RaidPATH, FileMode.READ);
 		string jsonData;
@@ -132,7 +132,7 @@ class BasicTerritoriesConfig
 	}
 	
 	void SaveRaidHandler(){
-		JsonFileLoader<ref array<ref BasicRaidHandler>>.JsonSaveFile(RaidPATH, m_BasicTerritoriesRaidHandlers);
+		JsonFileLoader<array<ref BasicRaidHandler>>.JsonSaveFile(RaidPATH, m_BasicTerritoriesRaidHandlers);
 	}
 	
 	bool IsInWhiteList(string item){
@@ -289,14 +289,14 @@ class BasicTerritoriesNoBuildZones{
 
 ref BasicTerritoriesConfig m_BasicTerritoriesConfig;
 
-ref array<ref BasicRaidHandler> m_BasicTerritoriesRaidHandlers = new ref array<ref BasicRaidHandler>;
+ref array<ref BasicRaidHandler> m_BasicTerritoriesRaidHandlers = new array<ref BasicRaidHandler>;
 
 //Helper function to return Config
-static ref BasicTerritoriesConfig GetBasicTerritoriesConfig()
+static BasicTerritoriesConfig GetBasicTerritoriesConfig()
 {
 	if (!m_BasicTerritoriesConfig)
 	{
-		m_BasicTerritoriesConfig = new ref BasicTerritoriesConfig;
+		m_BasicTerritoriesConfig = new BasicTerritoriesConfig;
 			
 		if ( GetGame().IsServer() ){
 			m_BasicTerritoriesConfig.Load();
@@ -306,7 +306,7 @@ static ref BasicTerritoriesConfig GetBasicTerritoriesConfig()
 };
 
 //Helper function to return Config
-static ref array<ref BasicRaidHandler> GetRaidHandlers()
+static array<ref BasicRaidHandler> GetRaidHandlers()
 {
 	return m_BasicTerritoriesRaidHandlers;
 };

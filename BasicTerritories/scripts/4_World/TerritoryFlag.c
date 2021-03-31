@@ -8,7 +8,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	
 	protected ref BasicTerritoryMembers m_TerritoryMembers = new BasicTerritoryMembers;
 	
-	ref TStringArray TerritoryMembers(){
+	TStringArray TerritoryMembers(){
 		return m_TerritoryMembers.GetMemberArray();
 	}
 	
@@ -111,7 +111,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	
 	void AddMemberClient(string guid){
 		if (CanAddMember()){
-			RPCSingleParam(BASICYNRRPCs.ADD_MEMBER, new Param2< string, ref BasicTerritoryMembers >(guid, m_TerritoryMembers), true, NULL);
+			RPCSingleParam(BASICYNRRPCs.ADD_MEMBER, new Param2< string, BasicTerritoryMembers >(guid, m_TerritoryMembers), true, NULL);
 		}
 	}
 	
@@ -147,7 +147,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	{
 		if ( GetGame().IsServer() ) {
 			SetSynchDirty();
-			RPCSingleParam(BASICYNRRPCs.SEND_DATA, new Param2< string,ref BasicTerritoryMembers >(m_TerritoryOwner, m_TerritoryMembers), true, identity);
+			RPCSingleParam(BASICYNRRPCs.SEND_DATA, new Param2< string, BasicTerritoryMembers >(m_TerritoryOwner, m_TerritoryMembers), true, identity);
 		} else if (GetGame().IsClient()){
 			RPCSingleParam(BASICYNRRPCs.REQUEST_DATA, new Param1<bool>( true ), true, NULL);
 		}
@@ -156,7 +156,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	override void OnRPC(PlayerIdentity sender, int rpc_type, ParamsReadContext ctx)
 	{
 		super.OnRPC(sender, rpc_type, ctx);
-		Param2< string, ref BasicTerritoryMembers > data;
+		Param2< string, BasicTerritoryMembers > data;
 		if (rpc_type == BASICYNRRPCs.SEND_DATA && GetGame().IsClient()) {
 			if (ctx.Read(data))	{
 				m_TerritoryOwner = data.param1;

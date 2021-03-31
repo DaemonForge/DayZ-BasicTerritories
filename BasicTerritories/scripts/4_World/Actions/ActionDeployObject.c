@@ -27,7 +27,7 @@ modded class ActionDeployObject : ActionContinuousBase
 					if (item && item.IsInherited(TerritoryFlagKit) && ShowTerritoryOnMap){
 						if (!BASICT_Marker){
 							Print("[BasicTerritory] [BasicMap] Creating Marker for TerritoryFlag");
-							BASICT_Marker = new ref BasicTerritoryMapMarker("", thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition());
+							BASICT_Marker = new BasicTerritoryMapMarker("", thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition());
 							BASICT_Marker.SetRadius(GameConstants.REFRESHER_RADIUS);
 							BasicMap().AddMarker("BasicTerritories", BASICT_Marker);
 						} else if ( BASICT_Marker.GetPosition() != thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition() ) {
@@ -92,8 +92,8 @@ modded class ActionDeployObject : ActionContinuousBase
 			m_CanPlaceHere = true;
 			return m_CanPlaceHere;
 		} else {
-			ref array<Object> objects = new array<Object>;
-			ref array<CargoBase> proxyCargos = new array<CargoBase>;
+			array<Object> objects = new array<Object>;
+			array<CargoBase> proxyCargos = new array<CargoBase>;
 			float theRadius = GameConstants.REFRESHER_RADIUS * 1.05;
 			if ( kit.IsInherited(TerritoryFlagKit) ){
 				theRadius = GameConstants.REFRESHER_RADIUS * 2.05;

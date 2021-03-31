@@ -15,8 +15,8 @@ modded class ActionRaiseFlag: ActionContinuousBase
 			TerritoryFlag theFlag = TerritoryFlag.Cast( target.GetObject() );
 			PlayerBase thePlayer = PlayerBase.Cast(player);
 			if ( theFlag && thePlayer && thePlayer.GetIdentity() ){
-				if (vector.Distance(theFlag.GetPosition(), thePlayer.GetPosition()) > UAMisc.MAX_DISTANCE_FROM_FLAG){
-					return false;
+				if (vector.Distance(theFlag.GetPosition(), thePlayer.GetPosition()) < UAMisc.MAX_DISTANCE_FROM_FLAG){
+					return true;
 				}
 			}
 		}

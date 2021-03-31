@@ -12,7 +12,7 @@ modded class MissionServer extends MissionBase
 	}
 	
 	
-	void RPCBasicTerritoriesModSettings( CallType type, ref ParamsReadContext ctx, ref PlayerIdentity sender, ref Object target ) {
+	void RPCBasicTerritoriesModSettings( CallType type, ParamsReadContext ctx, PlayerIdentity sender, Object target ) {
 		PlayerIdentity RequestedBy = PlayerIdentity.Cast(sender);
 		if (RequestedBy){
 			GetRPCManager().SendRPC("BASICT", "RPCBasicTerritoriesModSettings", new Param1< BasicTerritoriesConfig >( GetBasicTerritoriesConfig() ), true, RequestedBy);

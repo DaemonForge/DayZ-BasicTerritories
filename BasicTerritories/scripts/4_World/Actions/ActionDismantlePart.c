@@ -46,8 +46,8 @@ modded class ActionDismantlePart : ActionContinuousBase
 				m_CanDismantleHere = false;
 				return false;
 		} else {
-			ref array<Object> objects = new array<Object>;
-			ref array<CargoBase> proxyCargos = new array<CargoBase>;
+			array<Object> objects = new array<Object>;
+			array<CargoBase> proxyCargos = new array<CargoBase>;
 			float theRadius = GameConstants.REFRESHER_RADIUS;
 			GetGame().GetObjectsAtPosition(pos, theRadius, objects, proxyCargos);
 			TerritoryFlag theFlag;

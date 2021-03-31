@@ -5,8 +5,8 @@ class BasicRaidHandler{
 	float Explosive = 1;
 	float Other = 0;
 	bool ToolsFirst = 1;
-	ref array<ref BasicPartRaidHandler> PartModifier = new ref array<ref BasicPartRaidHandler>;
-	ref array<ref BasicToolsRaidHandler> ToolModifiers = new ref array<ref BasicToolsRaidHandler>;
+	ref array<ref BasicPartRaidHandler> PartModifier = new array<ref BasicPartRaidHandler>;
+	ref array<ref BasicToolsRaidHandler> ToolModifiers = new array<ref BasicToolsRaidHandler>;
 	[NonSerialized()]
 	ref map<string, ref BasicToolsRaidHandler> ToolModifier; //To make getting stuff more effecient
 	
@@ -14,11 +14,11 @@ class BasicRaidHandler{
 	void BasicRaidHandler(string type, bool init = true){
 		TypeName = type;
 		if (init){
-			PartModifier.Insert(new ref BasicPartRaidHandler("wall_wood_", 1.2));
-			PartModifier.Insert(new ref BasicPartRaidHandler("wall_metal_", 0.7, {"m67Grenade", "rgd5grenade", "landminetrap"}));
-			ToolModifiers.Insert(new ref BasicToolsRaidHandler("sledgehammer", 100));
+			PartModifier.Insert(new BasicPartRaidHandler("wall_wood_", 1.2));
+			PartModifier.Insert(new BasicPartRaidHandler("wall_metal_", 0.7, {"m67Grenade", "rgd5grenade", "landminetrap"}));
+			ToolModifiers.Insert(new BasicToolsRaidHandler("sledgehammer", 100));
 		}
-		PartModifier.Insert(new ref BasicPartRaidHandler("*", 1 ));
+		PartModifier.Insert(new BasicPartRaidHandler("*", 1 ));
 	}
 	
 	float GetTrueDamage(float dmg, int dmgType, string tool, string ammo, string part, TStringArray PartsWithHealth = NULL, float distance = 0){
@@ -41,7 +41,7 @@ class BasicRaidHandler{
 			typeMdfr = Other;
 		}
 		if (!ToolModifier){
-			ToolModifier = new ref map<string, ref BasicToolsRaidHandler>;
+			ToolModifier = new map<string, ref BasicToolsRaidHandler>;
 			for (i = 0; i < ToolModifiers.Count(); i++){
 				ToolModifier.Set(ToolModifiers.Get(i).Tool, ToolModifiers.Get(i));
 			}
