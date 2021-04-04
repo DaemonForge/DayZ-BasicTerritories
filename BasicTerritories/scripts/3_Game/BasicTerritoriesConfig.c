@@ -3,7 +3,7 @@ class BasicTerritoriesConfig
 	protected static string DirPATH = "$profile:BasicTerritories";
 	protected static string ConfigPATH = DirPATH + "\\settings.json";
 	protected static string RaidPATH = DirPATH + "\\RaidHandlers.json";
-	string ConfigVersion = "1";
+	string ConfigVersion = "2";
 	ref TStringArray WhiteList = { 
 		"Trap",
 		"Paper",
@@ -56,7 +56,9 @@ class BasicTerritoriesConfig
 		if (GetGame().IsServer()){
 			if (FileExist(ConfigPATH)){ //If config exist load File
 			    JsonFileLoader<BasicTerritoriesConfig>.JsonLoadFile(ConfigPATH, this);
-				Save();
+				if (ConfigVersion != "2"){
+					Save();
+				}
 			}else{ //File does not exist create file
 				if (!FileExist(DirPATH)){
 					MakeDirectory(DirPATH);
@@ -70,6 +72,7 @@ class BasicTerritoriesConfig
 				KitLifeTimes.Insert("fencekit", 3888000);
 				KitLifeTimes.Insert("watchtowerkit", 3888000);
 				KitLifeTimes.Insert("msp_", 3888000);
+				KitLifeTimes.Insert("bbp_", 3888000);
 				Save();
 			}
 			m_disableBaseDamage = GetGame().ServerConfigGetInt("disableBaseDamage");
@@ -258,6 +261,7 @@ class BasicTerritoriesConfig
 
 
 class BasicTerritoriesNoBuildZones{
+	string Name = "";
 	float X;
 	float Z;
 	float R;
