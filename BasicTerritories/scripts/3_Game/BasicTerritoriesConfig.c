@@ -57,6 +57,7 @@ class BasicTerritoriesConfig
 			if (FileExist(ConfigPATH)){ //If config exist load File
 			    JsonFileLoader<BasicTerritoriesConfig>.JsonLoadFile(ConfigPATH, this);
 				if (ConfigVersion != "2"){
+					ConfigVersion = "2";
 					Save();
 				}
 			}else{ //File does not exist create file
