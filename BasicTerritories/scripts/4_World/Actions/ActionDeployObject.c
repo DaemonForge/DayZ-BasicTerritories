@@ -1,7 +1,7 @@
 modded class ActionDeployObject : ActionContinuousBase
 {			 
-	protected bool m_CanPlaceHere = true;
-	protected bool m_RequestedSync = false;
+	protected int m_LastSync = 0;
+	protected bool m_CanPlaceHere = false;
 	protected vector m_LastCheckLocation = vector.Zero;
 	
 	#ifdef BASICMAP
@@ -80,6 +80,7 @@ modded class ActionDeployObject : ActionContinuousBase
 	}
 	
 	protected bool CanIPlaceHere(EntityAI kit, EntityAI item, vector pos, string GUID = ""){
+		int curTime  = GetGame().GetTime();
 		m_LastCheckLocation = pos;
 		if (pos == vector.Zero || !item || !kit){
 			m_CanPlaceHere = false;
@@ -114,8 +115,8 @@ modded class ActionDeployObject : ActionContinuousBase
 							return m_CanPlaceHere;
 						}
 						if (theFlag.HasRaisedFlag()){
-							if (!m_RequestedSync){
-								m_RequestedSync = true;
+							if (m_LastSync < curTime){
+								m_LastSync = curTime + 60000;
 								theFlag.SyncTerritory();
 							}
 							m_CanPlaceHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DEPLOY);

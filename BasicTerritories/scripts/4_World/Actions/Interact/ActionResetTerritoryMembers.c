@@ -2,6 +2,7 @@ class ActionResetTerritoryMembers extends ActionInteractBase
 {
 	protected bool CanResetOwner = false;
 	protected bool CanSetOwner = false;
+	protected int NextSync = 0;
 	
 	override string GetText(){
 		if (CanResetOwner) {
@@ -18,9 +19,15 @@ class ActionResetTerritoryMembers extends ActionInteractBase
 		PlayerIdentity ident = PlayerIdentity.Cast(player.GetIdentity());
 		TerritoryFlag theFlag = TerritoryFlag.Cast(target.GetObject());
 		if (ident && theFlag){
-			if (GetBasicTerritoriesConfig().ServerAdmins.Find(ident.GetId()) != -1){
+			int curTime = GetGame().GetTime();
+			if (!theFlag.CanReceiveNewOwner() && GetBasicTerritoriesConfig().ServerAdmins.Find(ident.GetId()) != -1){
 				CanResetOwner = true;
 				return true;
+			}
+			if (GetGame().IsClient() && theFlag.CanReceiveNewOwner() && NextSync <= curTime){
+				NextSync = curTime + 80000;
+				theFlag.SyncTerritory();
+				return false;
 			}
 			float state = theFlag.GetAnimationPhase("flag_mast");
 			if (theFlag.FindAttachmentBySlotName("Material_FPole_Flag") && state < TerritoryConst.FLAGUPSTATE){

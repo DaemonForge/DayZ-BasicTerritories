@@ -1,3 +1,5 @@
+#define BASICTERRITORIES
+
 class CfgPatches
 {
 	class BasicTerritoriesDefine

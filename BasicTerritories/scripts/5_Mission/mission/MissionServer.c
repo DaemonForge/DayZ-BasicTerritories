@@ -1,7 +1,7 @@
 modded class MissionServer extends MissionBase
 {
-	override void OnInit() {
-		super.OnInit();
+	override void OnMissionStart() {
+		super.OnMissionStart();
 		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.OnTerritoryInit, 500, false); //Delay so CE is Initialized 
 		GetRPCManager().AddRPC( "BASICT", "RPCBasicTerritoriesModSettings", this, SingeplayerExecutionType.Both );
 	}

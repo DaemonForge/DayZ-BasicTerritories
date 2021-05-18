@@ -1,11 +1,12 @@
 modded class ActionBuildPart: ActionContinuousBase
 {
 	
-	protected bool m_RequestedSync = false;
+	protected int m_LastSync = 0;
 	protected bool m_CanBuildHere = true;
 	protected vector m_LastCheckLocation = vector.Zero;
 	protected int m_LastCheckLocationNextTime = 0;
 	
+	int LastSync = 0;
 	
 	void ~ActionBuildPart(){
 		if (m_LastCheckLocation != vector.Zero){
@@ -77,8 +78,8 @@ modded class ActionBuildPart: ActionContinuousBase
 			if (objects){
 				for (int i = 0; i < objects.Count(); i++ ){
 					if (Class.CastTo( theFlag, objects.Get(i) ) ){
-						if (!m_RequestedSync){
-							m_RequestedSync = true;
+						if (m_LastSync < curTime){
+							m_LastSync = curTime + 60000;
 							theFlag.SyncTerritory();
 						}
 						m_CanBuildHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.BUILD);

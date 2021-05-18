@@ -1,6 +1,6 @@
 modded class ActionDismantlePart : ActionContinuousBase
 {
-	protected bool m_RequestedSync = false;
+	protected int m_LastSync = 0;
 	protected bool m_CanDismantleHere = true;
 	protected vector m_LastCheckLocation = vector.Zero;
 	protected int m_LastCheckLocationNextTime = 0;
@@ -54,8 +54,8 @@ modded class ActionDismantlePart : ActionContinuousBase
 			if (objects){
 				for (int i = 0; i < objects.Count(); i++ ){
 					if (Class.CastTo( theFlag, objects.Get(i) ) ){
-						if (!m_RequestedSync){
-							m_RequestedSync = true;
+						if (m_LastSync < curTime){
+							m_LastSync = curTime + 60000;
 							theFlag.SyncTerritory();
 						}
 						m_CanDismantleHere = theFlag.CheckPlayerPermission(GUID, TerritoryPerm.DISMANTLE);
