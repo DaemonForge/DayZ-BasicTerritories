@@ -6,7 +6,14 @@ class CfgPatches
 		weapons[]={};
 		requiredVersion=0.1;
 		requiredAddons[]={
-			"BasicTerritoriesDefine"
+#ifdef GAMELABS
+			"GameLabs_Scripts",
+#endif
+#ifdef BASICMAP
+			"BasicMap",
+#endif 
+			"BasicTerritoriesDefine",
+			"JM_CF_Scripts"
 		};
 	};
 };
