@@ -95,9 +95,9 @@ modded class ActionDeployObject : ActionContinuousBase
 		} else {
 			array<Object> objects = new array<Object>;
 			array<CargoBase> proxyCargos = new array<CargoBase>;
-			float theRadius = GameConstants.REFRESHER_RADIUS * 1.05;
+			float theRadius = GameConstants.REFRESHER_RADIUS;
 			if ( kit.IsInherited(TerritoryFlagKit) ){
-				theRadius = GameConstants.REFRESHER_RADIUS * 2.05;
+				theRadius = GameConstants.REFRESHER_RADIUS * 2;
 			}
 			GetGame().GetObjectsAtPosition(pos, theRadius, objects, proxyCargos);
 			TerritoryFlag theFlag;
