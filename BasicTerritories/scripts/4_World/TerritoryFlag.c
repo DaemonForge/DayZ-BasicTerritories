@@ -11,6 +11,8 @@ modded class TerritoryFlag extends BaseBuildingBase
 	
 	protected bool m_isRequestingSync = false;
 	
+	protected int m_LastSyncTime = 0;
+	
 	protected ref BasicTerritoryMembers m_TerritoryMembers = new BasicTerritoryMembers;
 	
 	void TerritoryFlag(){
@@ -193,7 +195,9 @@ modded class TerritoryFlag extends BaseBuildingBase
 	override void AfterStoreLoad(){
 		super.AfterStoreLoad();
 		
+		#ifdef GAMELABS
 		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.GameLabsUpdate, 300);
+		#endif
 	}
 	
 	
@@ -214,6 +218,17 @@ modded class TerritoryFlag extends BaseBuildingBase
 		#endif
 	}
 	
+	
+	void SyncTerritoryRateLimited(){
+		if ( GetGame().IsServer() ) {
+			return;
+		}
+		int curTime = GetGame().GetTime();
+		if (m_LastSyncTime < curTime){
+			m_LastSyncTime = curTime + 100000;
+			SyncTerritory();
+		}
+	}
 	
 	void SyncTerritory(PlayerIdentity identity = NULL)
 	{
@@ -273,13 +288,20 @@ modded class TerritoryFlag extends BaseBuildingBase
 	bool CheckPlayerPermission(string guid, int permission){
 		int publicPerms = GetBasicTerritoriesConfig().PublicPermission();
 		int PermsCheck = publicPerms & permission;
-		
-		if ( PermsCheck == permission || guid == m_TerritoryOwner){
-			//Print("[BasicTerritory] Action is in public permissions");
+		if ( PermsCheck == permission){ //Has Public perms
 			return true;
 		}
+		
+		if (GetBasicTerritoriesConfig().ServerAdmins.Find(guid) != -1){ // Is server admin
+			return true;
+		}
+		
+		if (guid == m_TerritoryOwner){ //Is Owner
+			return true;
+		}
+		
 		if (HasRaisedFlag()){
-			return m_TerritoryMembers.Check(guid, permission);
+			return m_TerritoryMembers.Check(guid, permission); //Is member or not
 		}
 		return true;
 	}
@@ -293,4 +315,50 @@ modded class TerritoryFlag extends BaseBuildingBase
 		AddAction( ActionAcceptMembership );
 	}
 	
+	static vector m_LastCheckLocation = vector.Zero;
+	static int m_LastCheckLocationNextTime = 0;
+	static bool m_CachedHasTerritoryPerm = false;
+	
+	static bool HasTerritoryPermAtPos( string GUID, int Perm, vector Pos, bool CheckTerritoryOverlap = false){
+		if (GetGame().IsServer()){ // To Pervent Lag Server side from stuff being placed. I know not super secure but good enough
+			return true;
+		}
+		if (GUID == ""){
+			return false;
+		}
+		int curTime = GetGame().GetTime();
+		if (vector.Distance(m_LastCheckLocation, Pos) <= 0.05 && m_LastCheckLocationNextTime > curTime){
+			return m_CachedHasTerritoryPerm;
+		}
+		m_LastCheckLocation = Pos;
+		m_LastCheckLocationNextTime = curTime + 5000;
+		if (Pos == vector.Zero){
+			Print("[BASICTERRITORIES] Checking Perms " + Perm + " for " + GUID + " :  vector.Zero");
+			m_CachedHasTerritoryPerm = false;
+			return m_CachedHasTerritoryPerm;
+		} else {
+			array<Object> objects = new array<Object>;
+			array<CargoBase> proxyCargos = new array<CargoBase>;
+			float theRadius = GameConstants.REFRESHER_RADIUS;
+			if (CheckTerritoryOverlap) {
+				theRadius = GameConstants.REFRESHER_RADIUS * 2;
+			}
+			GetGame().GetObjectsAtPosition(Pos, theRadius, objects, proxyCargos);
+			TerritoryFlag theFlag;
+			if (objects){
+				for (int i = 0; i < objects.Count(); i++ ){
+					if (Class.CastTo( theFlag, objects.Get(i) ) ){
+						theFlag.SyncTerritoryRateLimited();
+						bool thePerms = theFlag.CheckPlayerPermission(GUID, Perm);
+						Print("[BASICTERRITORIES] Checking Perms " + Perm + " for " + GUID + " : " + thePerms);
+						m_CachedHasTerritoryPerm = thePerms && !CheckTerritoryOverlap;
+						return m_CachedHasTerritoryPerm;
+					}
+				}
+			}
+		}
+		m_CachedHasTerritoryPerm = true;
+		return true;
+		
+	}
 }
