@@ -14,12 +14,12 @@ modded class TerritoryFlag extends BaseBuildingBase
 	protected ref BasicTerritoryMembers m_TerritoryMembers = new BasicTerritoryMembers;
 	
 	void TerritoryFlag(){
-		//Print("[BASICTERRITORY] +TerritoryFlag");
+		//Print("[BASICTERRITORIES] +TerritoryFlag");
 		RegisterNetSyncVariableBool("m_CanAddMember");
 	}
 
 	void ~TerritoryFlag(){
-		//Print("[BASICTERRITORY]  ~TerritoryFlag");
+		//Print("[BASICTERRITORIES]  ~TerritoryFlag");
 	#ifdef GAMELABS
 		if ( _customEventInstance ){
 			GetGameLabs().RemoveEvent(_customEventInstance);
@@ -79,7 +79,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	}
 	
 	void ResetMembers(){
-		Print("[BASICTERRITORY] ResetMembers m_TerritoryOwner: " + m_TerritoryOwner);
+		Print("[BASICTERRITORIES] ResetMembers m_TerritoryOwner: " + m_TerritoryOwner);
 		m_TerritoryMembers.Debug();
 		m_TerritoryMembers.Clear();
 		SyncTerritory();
@@ -100,16 +100,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 			_customEventInstance = NULL;
 		}
 		
-		if ( GetGame().IsServer() && !_customEventInstance && m_TerritoryOwner != "") {
-			if ( this._GetEventInstance() ){
-				Print("[BASICTERRITORIES] Removing _registeredInstance");
-				GetGameLabs().RemoveEvent( this._GetEventInstance() );
-				this._SetEventInstance(NULL);
-			}
-			Print("[BASICTERRITORIES] Adding _customEventInstance");
-			_customEventInstance = new _Event("<strong>Basic Territory</strong><br />Owner: [ <i>" + m_TerritoryOwner + "</i> ]<br />Raised: "+ Math.Round(GetRefresherTime01() * 100) + "%", "flag", this);
-			GetGameLabs().RegisterEvent( _customEventInstance );
-		}
+		GameLabsUpdate();
 	#endif
 	}
 	
@@ -192,7 +183,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 		}
 		
 		if (GetGame().IsServer()){
-			Print("[BASICTERRITORY] m_TerritoryOwner: " + m_TerritoryOwner + " Pos: " + GetPosition());
+			Print("[BASICTERRITORIES] m_TerritoryOwner: " + m_TerritoryOwner + " Pos: " + GetPosition());
 			m_TerritoryMembers.Debug();
 		}
 		
@@ -202,7 +193,12 @@ modded class TerritoryFlag extends BaseBuildingBase
 	override void AfterStoreLoad(){
 		super.AfterStoreLoad();
 		
-	#ifdef GAMELABS
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.GameLabsUpdate, 300);
+	}
+	
+	
+	void GameLabsUpdate(){
+		#ifdef GAMELABS
 		Print("[BASICTERRITORIES] Detected GAMELABS");
 		if ( GetGame().IsServer() && !_customEventInstance && m_TerritoryOwner != "") {
 			if ( this._GetEventInstance() ){
@@ -215,8 +211,9 @@ modded class TerritoryFlag extends BaseBuildingBase
 			Print(_customEventInstance);
 			GetGameLabs().RegisterEvent(_customEventInstance);
 		}
-	#endif
+		#endif
 	}
+	
 	
 	void SyncTerritory(PlayerIdentity identity = NULL)
 	{
@@ -241,10 +238,10 @@ modded class TerritoryFlag extends BaseBuildingBase
 		}
 		if (rpc_type == BASICYNRRPCs.REQUEST_DATA && GetGame().IsServer()) {
 			if (sender){
-				Print("[BASICTERRITORY] SyncTerritory Request From Client (" + sender.GetId() +") " + sender.GetName());
+				Print("[BASICTERRITORIES] SyncTerritory Request From Client (" + sender.GetId() +") " + sender.GetName());
 				SyncTerritory(sender);
 			} else {
-				Print("[BASICTERRITORY] SyncTerritory Request From Client With No sender");
+				Print("[BASICTERRITORIES] SyncTerritory Request From Client With No sender");
 				SyncTerritory();
 			}
 			return;
