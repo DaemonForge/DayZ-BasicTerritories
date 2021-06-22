@@ -315,25 +315,27 @@ modded class TerritoryFlag extends BaseBuildingBase
 		AddAction( ActionAcceptMembership );
 	}
 	
+	
+	
 	static vector m_LastCheckLocation = vector.Zero;
 	static int m_LastCheckLocationNextTime = 0;
 	static bool m_CachedHasTerritoryPerm = false;
 	
 	static bool HasTerritoryPermAtPos( string GUID, int Perm, vector Pos, bool CheckTerritoryOverlap = false){
-		if (GetGame().IsServer()){ // To Pervent Lag Server side from stuff being placed. I know not super secure but good enough
+		if ( GetGame().IsServer() ) { // To Pervent Lag Server side from stuff being placed. I know not super secure but good enough
 			return true;
 		}
-		if (GUID == ""){
+		if ( GUID == "" ){
 			return false;
 		}
 		int curTime = GetGame().GetTime();
-		if (vector.Distance(m_LastCheckLocation, Pos) <= 0.05 && m_LastCheckLocationNextTime > curTime){
+		if ( vector.Distance(m_LastCheckLocation, Pos) <= 0.05 && m_LastCheckLocationNextTime > curTime ){
 			return m_CachedHasTerritoryPerm;
 		}
 		m_LastCheckLocation = Pos;
 		m_LastCheckLocationNextTime = curTime + 5000;
-		if (Pos == vector.Zero){
-			Print("[BASICTERRITORIES] Checking Perms " + Perm + " for " + GUID + " :  vector.Zero");
+		if ( Pos == vector.Zero ){
+			//Print("[BASICTERRITORIES] Checking Perms " + Perm + " for " + GUID + " :  vector.Zero");
 			m_CachedHasTerritoryPerm = false;
 			return m_CachedHasTerritoryPerm;
 		} else {
@@ -349,16 +351,13 @@ modded class TerritoryFlag extends BaseBuildingBase
 				for (int i = 0; i < objects.Count(); i++ ){
 					if (Class.CastTo( theFlag, objects.Get(i) ) ){
 						theFlag.SyncTerritoryRateLimited();
-						bool thePerms = theFlag.CheckPlayerPermission(GUID, Perm);
-						Print("[BASICTERRITORIES] Checking Perms " + Perm + " for " + GUID + " : " + thePerms);
-						m_CachedHasTerritoryPerm = thePerms && !CheckTerritoryOverlap;
+						m_CachedHasTerritoryPerm = theFlag.CheckPlayerPermission(GUID, Perm) && !CheckTerritoryOverlap;
 						return m_CachedHasTerritoryPerm;
 					}
 				}
 			}
 		}
 		m_CachedHasTerritoryPerm = true;
-		return true;
-		
+		return m_CachedHasTerritoryPerm;
 	}
 }

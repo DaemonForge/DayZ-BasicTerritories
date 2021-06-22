@@ -1,10 +1,5 @@
 modded class ActionDismantlePart : ActionContinuousBase
 {
-	protected int m_LastSync = 0;
-	protected bool m_CanDismantleHere = true;
-	protected vector m_LastCheckLocation = vector.Zero;
-	protected int m_LastCheckLocationNextTime = 0;
-	
 	override bool ActionCondition( PlayerBase player, ActionTarget target, ItemBase item )
 	{	
 		ItemBase theTarget;
@@ -31,7 +26,12 @@ modded class ActionDismantlePart : ActionContinuousBase
 	}
 	
 	
-	//For Backwards compabaility with fix;
+	//For Backwards compabaility with dismantle fix
+	protected int m_LastSync = 0;
+	protected bool m_CanDismantleHere = true;
+	protected vector m_LastCheckLocation = vector.Zero;
+	protected int m_LastCheckLocationNextTime = 0;
+	
 	bool CanIDismantleHere(vector pos, string guid){
 		Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		Print("  ================ WARNING!! ================");
