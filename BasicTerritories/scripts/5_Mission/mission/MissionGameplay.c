@@ -19,6 +19,7 @@ modded class MissionGameplay extends MissionBase
 		
 		#ifdef BASICMAP
 		if (GetBasicTerritoriesConfig().NoBuildZones ){
+			BasicMap().ClearMarkers("TerritoryNoBuildZones");
 			bool SomeZonesOnTheMap = false;
 			for (int i = 0; i < GetBasicTerritoriesConfig().NoBuildZones.Count(); i++){
 				if (GetBasicTerritoriesConfig().NoBuildZones.Get(i) && GetBasicTerritoriesConfig().NoBuildZones.Get(i).DrawOnMap){
