@@ -23,14 +23,14 @@ class CfgMods
 			{
 				value = "";
 				files[] = {
-					"BasicTerritoriesDefine/scripts/Common"
+					"BasicTerritoriesDefines/scripts/Common"
 					};
 			};
 			class gameScriptModule
             {
 				value = "";
                 files[]={
-					"BasicTerritoriesDefine/scripts/Common"
+					"BasicTerritoriesDefines/scripts/Common"
 					};
             };
 			
@@ -38,7 +38,7 @@ class CfgMods
             {
                 value="";
                 files[]={ 
-					"BasicTerritoriesDefine/scripts/Common"
+					"BasicTerritoriesDefines/scripts/Common"
 				};
             };
 			
@@ -46,7 +46,7 @@ class CfgMods
             {
                 value="";
                 files[]={
-					"BasicTerritoriesDefine/scripts/Common"
+					"BasicTerritoriesDefines/scripts/Common"
 				};
             };
         };
