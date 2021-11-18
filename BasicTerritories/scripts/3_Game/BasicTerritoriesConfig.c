@@ -36,10 +36,13 @@ class BasicTerritoriesConfig
 	string DismantleWarningMessage = " Sorry, you can't dismantle anything this close to a raised flag";
 	string LowerFlagWarningMessage = " Sorry, you do not have permissions to lower the flag in this territory";
 	string TerritoryRequiredWarningMessage = " Sorry, you are required to build a territory to be able to build";
+	string AlreadyInAnotherTerritoryWarningMessage = "Sorry, you are already owner or member of too many bases";
 	
 	int FlagRefreshFrequency = 0;
 	
 	ref map<string, int> KitLifeTimes = new map<string, int>;
+	
+	int MaxPlayerTerritoriesAsOwnerOrMember = 1;
 	
 	[NonSerialized()]
 	protected int m_BlockWarnPlayer = 0;
