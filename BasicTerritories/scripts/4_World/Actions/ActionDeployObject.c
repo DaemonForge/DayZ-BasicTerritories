@@ -70,7 +70,7 @@ modded class ActionDeployObject : ActionContinuousBase
 	
 	void RemoveTheBasicMapMarker(){
 	#ifdef BASICMAP
-		if (GetGame().IsClient() && BASICT_Marker && BASICT_Marker.GetPosition() != vector.Zero ){
+		if (GetGame() && GetGame().IsClient() && BASICT_Marker && BASICT_Marker.GetPosition() != vector.Zero ){
 			Print("[BasicTerritory] [BasicMap] Removing Marker for TerritoryFlag");
 			BasicMap().RemoveMarker(BasicMap().CLIENT_KEY , BASICT_Marker);
 			BASICT_Marker.SetPosition(vector.Zero);
