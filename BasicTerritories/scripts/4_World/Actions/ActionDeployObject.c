@@ -45,11 +45,7 @@ modded class ActionDeployObject : ActionContinuousBase
 						}
 					}
 					#endif
-					string theGUID = "";
-					if (thePlayer.GetIdentity()) {
-						theGUID = thePlayer.GetIdentity().GetId();
-					}
-					return CanIPlaceHere(item, thePlayer.GetHologramLocal().GetProjectionEntity(), thePlayer.GetHologramLocal().GetProjectionEntity().GetPosition(), theGUID);
+					return CanIPlaceHere(item, thePlayer);
 				} else {
 					return m_CanPlaceHere;
 				}
@@ -79,10 +75,23 @@ modded class ActionDeployObject : ActionContinuousBase
 	#endif
 	}
 	
-	protected bool CanIPlaceHere(EntityAI kit, EntityAI item, vector pos, string GUID = ""){
+	protected bool CanIPlaceHere(EntityAI kit, PlayerBase player){
+
+		string GUID = "";
+		if (player.GetIdentity()) {
+			GUID = player.GetIdentity().GetId();
+		}
+
+		EntityAI item = player.GetHologramLocal().GetProjectionEntity();
+		vector pos = player.GetHologramLocal().GetProjectionEntity().GetPosition();
+
 		int curTime  = GetGame().GetTime();
 		m_LastCheckLocation = pos;
 		if (pos == vector.Zero || !item || !kit){
+			m_CanPlaceHere = false;
+			return m_CanPlaceHere;
+		} else if (!player.IsAllowedToBuildOrJoinTerritory()) {
+			GetBasicTerritoriesConfig().SendNotification( GetBasicTerritoriesConfig().AlreadyInAnotherTerritoryWarningMessage, TerritoryIcons.TerritoryConflict);
 			m_CanPlaceHere = false;
 			return m_CanPlaceHere;
 		} else if (!GetBasicTerritoriesConfig().CanBuildHere(pos, item.GetType()) || !GetBasicTerritoriesConfig().CanBuildHere(pos, kit.GetType()) ){

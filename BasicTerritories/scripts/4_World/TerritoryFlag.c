@@ -36,7 +36,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 		
 		super.EEInit();
 		
-		
+
 		if ( GetGame().IsClient() ){
 			DayZPlayer player =  DayZPlayer.Cast(GetGame().GetPlayer());
 			if (player){
@@ -49,19 +49,16 @@ modded class TerritoryFlag extends BaseBuildingBase
 			AnimateFlag(1 - GetRefresherTime01());
 		}
 	}
-	
-	
+
 	TStringArray TerritoryMembers(){
 		return m_TerritoryMembers.GetMemberArray();
 	}
-	
-	
+
 	void DoFirstSync(){
 		m_isRequestingSync = false;
 		SyncTerritory();
 	}
-	
-	
+
 	bool IsTerritoryOwner(string guid){
 		if (!m_TerritoryOwner || m_TerritoryOwner == ""){
 			return false;
@@ -82,6 +79,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	
 	void ResetMembers(){
 		Print("[BASICTERRITORIES] ResetMembers m_TerritoryOwner: " + m_TerritoryOwner);
+		BasicTerritoriesData.GetInstance().RemovePlayers(m_TerritoryMembers.GetMemberArray());
 		m_TerritoryMembers.Debug();
 		m_TerritoryMembers.Clear();
 		SyncTerritory();
@@ -93,6 +91,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	
 	void SetTerritoryOwner(string guid){
 		m_TerritoryOwner = guid;
+		BasicTerritoriesData.GetInstance().AddPlayer(guid);
 		SyncTerritory();
 		
 	#ifdef GAMELABS
@@ -130,6 +129,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 			return;
 		} else {
 			m_TerritoryMembers.AddMember(guid);
+			BasicTerritoriesData.GetInstance().AddPlayer(guid);
 			AllowMemberToBeAdded(false);
 			SyncTerritory();
 		}
@@ -140,6 +140,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 			return;
 		} else {
 			m_TerritoryMembers.RemoveMember(guid);
+			BasicTerritoriesData.GetInstance().RemovePlayer(guid);
 			SyncTerritory();
 		}
 	}
@@ -184,6 +185,9 @@ modded class TerritoryFlag extends BaseBuildingBase
 			return false;
 		}
 		
+		BasicTerritoriesData.GetInstance().AddPlayer(m_TerritoryOwner);
+		BasicTerritoriesData.GetInstance().AddPlayers(m_TerritoryMembers.GetMemberArray());
+
 		if (GetGame().IsServer()){
 			Print("[BASICTERRITORIES] m_TerritoryOwner: " + m_TerritoryOwner + " Pos: " + GetPosition());
 			m_TerritoryMembers.Debug();
