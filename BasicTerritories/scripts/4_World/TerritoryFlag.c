@@ -322,7 +322,7 @@ modded class TerritoryFlag extends BaseBuildingBase
 	static bool m_CachedHasTerritoryPerm = false;
 	
 	static bool HasTerritoryPermAtPos( string GUID, int Perm, vector Pos, bool CheckTerritoryOverlap = false){
-		if ( GetGame().IsServer() ) { // To Pervent Lag Server side from stuff being placed. I know not super secure but good enough
+		if ( GetGame().IsDedicatedServer() ) { // To Pervent Lag Server side from stuff being placed. I know not super secure but good enough
 			return true;
 		}
 		if ( GUID == "" ){

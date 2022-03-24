@@ -5,6 +5,7 @@ modded class BaseBuildingBase
 	{		
 		super.EEHitBy(damageResult, damageType, source, component, dmgZone, ammo, modelPos, speedCoef);
 		if (!GetGame().IsClient() && GetBasicTerritoriesConfig().disableBaseDamage() < 1){
+			if (GetHealth("","Health") <= 1) return;
 			PlayerBase player;
 			string tool = "";
 			float distance = 0;		
