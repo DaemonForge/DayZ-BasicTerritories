@@ -299,11 +299,11 @@ modded class TerritoryFlag extends BaseBuildingBase
 		if (guid == m_TerritoryOwner){ //Is Owner
 			return true;
 		}
-		
-		if (HasRaisedFlag()){
-			return m_TerritoryMembers.Check(guid, permission); //Is member or not
-		}
-		return true;
+
+        if (!m_TerritoryOwner)
+            return true;
+
+        return m_TerritoryMembers.Check(guid, permission); //Is member or not
 	}
 	
 	
