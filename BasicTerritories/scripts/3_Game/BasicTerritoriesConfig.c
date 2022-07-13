@@ -34,6 +34,7 @@ class BasicTerritoriesConfig
 	string DeSpawnWarningMessage = " You are building outside a territory, $ITEMNAME$ will despawn in $LIFETIME$ without a Territory";
 	string BuildPartWarningMessage = " Sorry, you don't have permissions to build in this area.";
 	string DismantleWarningMessage = " Sorry, you can't dismantle anything this close to a raised flag";
+	string DismantleFlagpoleWarningMessage = " Sorry, you can't dismantle this flagpole";
 	string LowerFlagWarningMessage = " Sorry, you do not have permissions to lower the flag in this territory";
 	string TerritoryRequiredWarningMessage = " Sorry, you are required to build a territory to be able to build";
 	

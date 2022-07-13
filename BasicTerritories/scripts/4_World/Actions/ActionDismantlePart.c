@@ -2,13 +2,29 @@ modded class ActionDismantlePart : ActionContinuousBase
 {
 	override bool ActionCondition( PlayerBase player, ActionTarget target, ItemBase item )
 	{	
-		ItemBase theTarget;
 		if (super.ActionCondition( player, target, item )){
 			if (GetGame().IsServer()){
 				return true;
 			}
+
+			TerritoryFlag theFlag = TerritoryFlag.Cast( target.GetObject() );
+			PlayerBase thePlayer = PlayerBase.Cast(player);
+
+			if ( theFlag && thePlayer && thePlayer.GetIdentity() ){
+				theFlag.SyncTerritoryRateLimited();
+				if (vector.Distance(theFlag.GetPosition(), thePlayer.GetPosition()) > UAMisc.MAX_DISTANCE_FROM_FLAG){
+					return false;
+				}
+				if (!theFlag.CheckPlayerPermission(thePlayer.GetIdentity().GetId(), TerritoryPerm.DISMANTLE)){
+					GetBasicTerritoriesConfig().SendNotification(GetBasicTerritoriesConfig().DismantleFlagpoleWarningMessage, TerritoryIcons.DismantleWarning);
+					return false;
+				}
+				return true;
+			}
+
+			ItemBase theTarget;
+
 			if ( Class.CastTo( theTarget, target.GetObject() ) || Class.CastTo( theTarget, target.GetParent()) ) {
-				PlayerBase thePlayer = PlayerBase.Cast(player);
 				if (theTarget && thePlayer) {
 					string theGUID = "";
 					if ( thePlayer.GetIdentity() ) {
@@ -19,8 +35,8 @@ modded class ActionDismantlePart : ActionContinuousBase
 						return false;
 					}
 				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
