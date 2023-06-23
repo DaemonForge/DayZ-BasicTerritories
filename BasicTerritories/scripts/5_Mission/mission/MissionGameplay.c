@@ -11,18 +11,30 @@ modded class MissionGameplay extends MissionBase
 	}
 	
 	
-	void RPCBasicTerritoriesModSettings( CallType type, ParamsReadContext ctx, PlayerIdentity sender, Object target ) {
-		Param1< BasicTerritoriesConfig > data; 
+	void RPCBasicTerritoriesModSettings( CallType type, ParamsReadContext ctx, PlayerIdentity sender, Object target )
+	{
+		Param1< BasicTerritoriesConfig > data;
+
 		if ( !ctx.Read( data ) ) return;
+
 		Print("[BASICT][Client] Received Config From Server");
+
 		m_BasicTerritoriesConfig = data.param1;
 		
 		#ifdef BASICMAP
-		if (GetBasicTerritoriesConfig().NoBuildZones ){
+
+		int i;
+
+		if (GetBasicTerritoriesConfig().NoBuildZones )
+		{
 			BasicMap().ClearMarkers("TerritoryNoBuildZones");
-			bool SomeZonesOnTheMap = false;
-			for (int i = 0; i < GetBasicTerritoriesConfig().NoBuildZones.Count(); i++){
-				if (GetBasicTerritoriesConfig().NoBuildZones.Get(i) && GetBasicTerritoriesConfig().NoBuildZones.Get(i).DrawOnMap){
+
+			bool SomeNoBuildZonesOnTheMap = false;
+
+			for (i = 0; i < GetBasicTerritoriesConfig().NoBuildZones.Count(); i++)
+			{
+				if (GetBasicTerritoriesConfig().NoBuildZones.Get(i) && GetBasicTerritoriesConfig().NoBuildZones.Get(i).DrawOnMap)
+				{
 					BasicMapCircleMarker tmpMarker = new BasicMapCircleMarker("",  GetBasicTerritoriesConfig().NoBuildZones.Get(i).GetPos(), "BasicTerritories\\images\\NoBuild.paa", {189, 38, 78},150);
 					tmpMarker.SetRadius(GetBasicTerritoriesConfig().NoBuildZones.Get(i).R);
 					tmpMarker.SetShowCenterMarker(true);
@@ -30,12 +42,37 @@ modded class MissionGameplay extends MissionBase
 					tmpMarker.SetCanEdit(false);
 					tmpMarker.SetGroup("TerritoryNoBuildZones");
 					BasicMap().AddMarker("TerritoryNoBuildZones",tmpMarker);
-					SomeZonesOnTheMap = true;
+					SomeNoBuildZonesOnTheMap = true;
 				}
 			}
-			if (SomeZonesOnTheMap){
+
+			if (SomeNoBuildZonesOnTheMap)
+			{
 				BasicMap().RegisterGroup("TerritoryNoBuildZones", new BasicMapGroupMetaData("TerritoryNoBuildZones", "No Build Areas"),NULL);
 			}
+
+			bool SomeDoBuildZonesOnTheMap = false;
+
+			for (i = 0; i < GetBasicTerritoriesConfig().DoBuildZones.Count(); i++)
+			{
+				if (GetBasicTerritoriesConfig().DoBuildZones.Get(i) && GetBasicTerritoriesConfig().DoBuildZones.Get(i).DrawOnMap)
+				{
+					BasicMapCircleMarker tmpMarker2 = new BasicMapCircleMarker("",  GetBasicTerritoriesConfig().DoBuildZones.Get(i).GetPos(), "BasicTerritories\\images\\Build.paa", {212, 175, 55},180);
+					tmpMarker2.SetRadius(GetBasicTerritoriesConfig().DoBuildZones.Get(i).R);
+					tmpMarker2.SetShowCenterMarker(true);
+					tmpMarker2.SetHideIntersects(true);
+					tmpMarker2.SetCanEdit(false);
+					tmpMarker2.SetGroup("TerritoryDoBuildZones");
+					BasicMap().AddMarker("TerritoryDoBuildZones",tmpMarker2);
+					SomeDoBuildZonesOnTheMap = true;
+				}
+			}
+
+			if (SomeDoBuildZonesOnTheMap)
+			{
+				BasicMap().RegisterGroup("TerritoryDoBuildZones", new BasicMapGroupMetaData("TerritoryDoBuildZones", "No Build Areas"),NULL);
+			}
+
 		}
 		#endif
 	}

@@ -3,7 +3,7 @@ class BasicTerritoriesConfig
 	protected static string DirPATH = "$profile:BasicTerritories";
 	protected static string ConfigPATH = DirPATH + "\\settings.json";
 	protected static string RaidPATH = DirPATH + "\\RaidHandlers.json";
-	string ConfigVersion = "2";
+	string ConfigVersion = "3";
 	ref TStringArray WhiteList = { 
 		"Trap",
 		"Paper",
@@ -27,7 +27,8 @@ class BasicTerritoriesConfig
 	int Notifications = 0; //0 Chat | 1 Notifications Mod
 	
 	ref array< ref BasicTerritoriesNoBuildZones> NoBuildZones = new array< ref BasicTerritoriesNoBuildZones>;
-	
+	ref array< ref BasicTerritoriesDoBuildZones> DoBuildZones = new array< ref BasicTerritoriesDoBuildZones>;
+
 	string NoBuildZoneMessage = " You can't build here, you are trying to build in a designated no build zone";
 	string TerritoryConflictMessage = " Sorry you can't build a territory this close to another territory";
 	string WithinTerritoryWarning = " Sorry you can't build this close to an enemy territory";
@@ -51,37 +52,56 @@ class BasicTerritoriesConfig
 	[NonSerialized()]
 	int m_disableBaseDamage = 0;
 	
-	void Load(){
+	void Load()
+	{
 		Print("[BasicTerritories] Loading Config");
-		if (GetGame().IsServer()){
-			if (FileExist(ConfigPATH)){ //If config exist load File
+		if (GetGame().IsServer())
+		{
+			if (FileExist(ConfigPATH))
+			{ //If config exist load File
 			    JsonFileLoader<BasicTerritoriesConfig>.JsonLoadFile(ConfigPATH, this);
-				if (ConfigVersion != "2"){
-					ConfigVersion = "2";
+				if (ConfigVersion != "3")
+				{
+					ConfigVersion = "3";
+					DoBuildZones.Insert(new BasicTerritoriesDoBuildZones(3685, 5982, 20));
 					Save();
 				}
-			}else{ //File does not exist create file
-				if (!FileExist(DirPATH)){
+			}
+			else
+			{ //File does not exist create file
+				if (!FileExist(DirPATH))
+				{
 					MakeDirectory(DirPATH);
 				}
 				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(3703.5, 5985.11, 100));
 				NoBuildZones.Insert(new BasicTerritoriesNoBuildZones(8345.61, 5985.93, 100));
+
+				DoBuildZones.Insert(new BasicTerritoriesDoBuildZones(3685, 5982, 20));
+
 				FlagRefreshFrequency = GetCEApi().GetCEGlobalInt("FlagRefreshFrequency");
-				if (FlagRefreshFrequency <= 0){
+
+				if (FlagRefreshFrequency <= 0)
+				{
 					FlagRefreshFrequency = GameConstants.REFRESHER_FREQUENCY_DEFAULT;
 				}
+
 				KitLifeTimes.Insert("fencekit", 3888000);
 				KitLifeTimes.Insert("watchtowerkit", 3888000);
 				KitLifeTimes.Insert("msp_", 3888000);
 				KitLifeTimes.Insert("bbp_", 3888000);
+
 				Save();
 			}
 			m_disableBaseDamage = GetGame().ServerConfigGetInt("disableBaseDamage");
-			if( m_disableBaseDamage < 1){
+			if( m_disableBaseDamage < 1)
+			{
 				Print("[BasicTerritories] BaseDamage [Enabled]");	
-				if (FileExist(RaidPATH)){
+				if (FileExist(RaidPATH))
+				{
 					LoadRaidHandler();
-				} else {
+				}
+				else
+				{
 					m_BasicTerritoriesRaidHandlers = new array<ref BasicRaidHandler>;
 					m_BasicTerritoriesRaidHandlers.Insert(new BasicRaidHandler("fence"));
 					m_BasicTerritoriesRaidHandlers.Insert(new BasicRaidHandler("watchtower"));
@@ -89,21 +109,26 @@ class BasicTerritoriesConfig
 					m_RaidHandlerLoaded = true;
 					SaveRaidHandler();
 				}
-			} else {
+			}
+			else
+			{
 				Print("[BasicTerritories] BaseDamage [Disabled]");	
 			}
 		}
 	}
 	
-	void Save(){
+	void Save()
+	{
 		JsonFileLoader<BasicTerritoriesConfig>.JsonSaveFile(ConfigPATH, this);
 	}
 
-	int disableBaseDamage(){
+	int disableBaseDamage()
+	{
 		return m_disableBaseDamage;
 	}
 	
-	void LoadRaidHandler(){
+	void LoadRaidHandler()
+	{
 		if (!FileExist(RaidPATH)) {
 			Print("[BasicTerritories] File At" + RaidPATH + " could not be found");
 			return;
@@ -135,17 +160,22 @@ class BasicTerritoriesConfig
 		}
 	}
 	
-	void SaveRaidHandler(){
+	void SaveRaidHandler()
+	{
 		JsonFileLoader<array<ref BasicRaidHandler>>.JsonSaveFile(RaidPATH, m_BasicTerritoriesRaidHandlers);
 	}
 	
-	bool IsInWhiteList(string item){
-		if (WhiteList && WhiteList.Count() > 0){
-			for (int i = 0; i < WhiteList.Count(); i++){
+	bool IsInWhiteList(string item)
+	{
+		if (WhiteList && WhiteList.Count() > 0)
+		{
+			for (int i = 0; i < WhiteList.Count(); i++)
+			{
 				item.ToLower();
 				string wItem = WhiteList.Get(i);
 				wItem.ToLower();
-				if (item.Contains(wItem)){
+				if (item.Contains(wItem))
+				{
 					return true;
 				}
 			}
@@ -153,10 +183,12 @@ class BasicTerritoriesConfig
 		return false;
 	}
 	
-	bool CanWarnPlayer(string message = ""){
+	bool CanWarnPlayer(string message = "")
+	{
 		message.ToLower();
 		int curTime = GetGame().GetTime();
-		if ( curTime > m_BlockWarnPlayer || m_BlockLastMessage != message){
+		if ( curTime > m_BlockWarnPlayer || m_BlockLastMessage != message)
+		{
 			m_BlockLastMessage = message;
 			m_BlockWarnPlayer = curTime + 6000;
 			return true;
@@ -165,21 +197,27 @@ class BasicTerritoriesConfig
 	}
 	
 	
-	int PublicPermission(){
+	int PublicPermission()
+	{
 		return PublicPermissions;
 	}
 	
-	int MemberPermission(){
+	int MemberPermission()
+	{
 		return MemberPermissions;
 	}
 	
-	void SendNotification(string text, string icon = "BasicTerritories/images/NoBuild.paa"){
-		if (GetGame().IsClient() && CanWarnPlayer(text)){
-			if (Notifications == 0){
+	void SendNotification(string text, string icon = "BasicTerritories/images/NoBuild.paa")
+	{
+		if (GetGame().IsClient() && CanWarnPlayer(text))
+		{
+			if (Notifications == 0)
+			{
 				GetGame().Chat(text,"");
 			} 
 			#ifdef NOTIFICATIONS 
-			else if (Notifications == 1){
+			else if (Notifications == 1)
+			{
 				NotificationSystem.SimpleNoticiation(text, "Territory", icon, ARGB(230, 209, 60, 60), 8, NULL);
 			}
 			#endif
@@ -187,13 +225,30 @@ class BasicTerritoriesConfig
 	}
 	
 	
-	bool CanBuildHere(vector pos, string item = ""){
-		if (IsInWhiteList(item)){
+	bool CanBuildHere(vector pos, string item = "")
+	{
+		int i;
+
+		if (IsInWhiteList(item))
+		{
 			return true;
 		}
-		if (NoBuildZones){
-			for (int i = 0; i < NoBuildZones.Count(); i++){
-				if (NoBuildZones.Get(i) && NoBuildZones.Get(i).Check(pos) ){
+		if (DoBuildZones)
+		{
+			for (i = 0; i < DoBuildZones.Count(); i++)
+			{
+				if (DoBuildZones.Get(i) && DoBuildZones.Get(i).Check(pos) )
+				{
+					return true;
+				}
+			}
+		}
+		if (NoBuildZones)
+		{
+			for (i = 0; i < NoBuildZones.Count(); i++)
+			{
+				if (NoBuildZones.Get(i) && NoBuildZones.Get(i).Check(pos) )
+				{
 					return false;
 				}
 			}
@@ -258,6 +313,16 @@ class BasicTerritoriesConfig
 		}
 		return 0;
 	}
+
+	string GetConfigVersion()
+	{
+		return ConfigVersion;
+	}
+
+	void SetConfigVersion(string version)
+	{
+		ConfigVersion = version;
+	}
 }
 
 
@@ -285,10 +350,44 @@ class BasicTerritoriesNoBuildZones{
 		return false;
 	}
 	
-	vector GetPos(){
+	vector GetPos()
+	{
 		return Vector(X, GetGame().SurfaceY(X,Z),Z);
 	}
 		
+}
+
+
+class BasicTerritoriesDoBuildZones
+{
+	string Name = "";
+	float X;
+	float Z;
+	float R;
+	bool DrawOnMap = false;
+
+	void BasicTerritoriesDoBuildZones(float x, float z, float r){
+		X = x;
+		Z = z;
+		R = r;
+	}
+
+	//Returns True If is in zone
+	bool Check(vector checkPos){
+		if (checkPos){
+			vector ZeroedHeightPos = Vector(checkPos[0], 0,checkPos[2]);
+			if (vector.Distance(ZeroedHeightPos, Vector(X, 0, Z)) <= R){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	vector GetPos()
+	{
+		return Vector(X, GetGame().SurfaceY(X,Z),Z);
+	}
+
 }
 
 
